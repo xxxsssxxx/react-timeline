@@ -35,7 +35,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint --ext .js,.tsx,.ts --ignore-path .gitignore ."
   },
   "eslintConfig": {
     "extends": [
@@ -49,7 +50,7 @@
       "no-console": ["warn"],
       "no-debugger": ["warn"],
       "no-unused-vars": "warn",
-      "comma-dangle": "off",
+      "comma-dangle": ["error", "never"],
       "space-before-function-paren": [1, "never"],
       "curly": ["error", "multi-line"]
     }
