@@ -44,6 +44,4 @@ jobs:
       - name: Install npm packages
         run: npm install
       - name: Module tests
-        run: npm run test:module
-      - name: Snapshot tests
-        run: npm run test:snapshot
+        run: npm run test:coverage

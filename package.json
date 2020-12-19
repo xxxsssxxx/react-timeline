@@ -35,6 +35,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:coverage": "npm test -- --coverage --colors",
     "eject": "react-scripts eject",
     "lint": "eslint --ext .js,.tsx,.ts --ignore-path .gitignore"
   },
@@ -54,6 +55,26 @@
       "space-before-function-paren": [1, "never"],
       "curly": ["error", "multi-line"]
     }
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "src/*.{js,jsx,ts,tsx}",
+      "!src/*.*.d*",
+      "!src/index.tsx",
+      "!src/serviceWorkers/*",
+      "!<rootDir>/node_modules/",
+      "!<rootDir>/path/to/dir/"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 90,
+        "functions": 90,
+        "lines": 90,
+        "statements": 90
+      }
+    },
+    "coverageReporters": ["text", "text-summary"]
   },
   "browserslist": {
     "production": [
