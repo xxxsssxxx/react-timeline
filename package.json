@@ -41,7 +41,18 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "semi": [1, "always"],
+      "quotes": [1, "double"],
+      "no-multi-spaces": ["error"],
+      "no-console": ["warn"],
+      "no-debugger": ["warn"],
+      "no-unused-vars": "warn",
+      "comma-dangle": "off",
+      "space-before-function-paren": [1, "never"],
+      "curly": ["error", "multi-line"]
+    }
   },
   "browserslist": {
     "production": [
