@@ -1,5 +1,5 @@
 import React from "react";
-import { ITag } from "../../interfaces/interfaces";
+import { ITag } from "../../../interfaces/interfaces";
 
 type Props = {
   tag: ITag;

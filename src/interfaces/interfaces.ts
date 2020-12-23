@@ -4,7 +4,8 @@ export interface IActivity {
   date: string,
   tags: ITag[],
   assignee: IAssignee,
-  className?: string
+  className?: string,
+  side?: string
 };
 
 export interface ITag {
