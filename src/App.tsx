@@ -4,7 +4,7 @@ import TimeLine from "./components/TimeLine/TimeLine";
 import { EType } from "./enums/enums";
 
 
-import { activities } from "./mocks/mocks";
+import { blocks } from "./mocks/mocks";
 
 const App = () => {
   const title: string = "React timeline";
@@ -17,7 +17,7 @@ const App = () => {
         <h1 title={title} className="text-center text-2xl">
           {title}
         </h1>
-        <TimeLine activities={activities} showTools={showTools} type={type} />
+        <TimeLine blocks={blocks} showTools={showTools} type={type} folded={true} />
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { IActivity } from "../interfaces/interfaces";
+import { IActivity, IBlock } from "../interfaces/interfaces";
 import { ESide, EPriority } from "../enums/enums";
 import { Schemes } from "../schemes/schemes";
 
@@ -54,3 +54,16 @@ export const activities: IActivity[] = [
     side: ESide.RIGHT
   }
 ];
+
+export const blocks: IBlock[] = [
+  { blockText: new Date().toLocaleDateString(), activities },
+  { blockText: addDays(4), activities },
+  { blockText: addDays(10), activities },
+  { blockText: addDays(25), activities }
+];
+
+function addDays(days: number): string {
+  const result = new Date();
+  result.setDate(result.getDate() + days);
+  return result.toLocaleDateString();
+};

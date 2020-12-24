@@ -1,3 +1,9 @@
+export interface IBlock {
+  activities: IActivity[],
+  blockText: string | number,
+  index?: number
+}
+
 export interface IActivity {
   text: string,
   href?: string,

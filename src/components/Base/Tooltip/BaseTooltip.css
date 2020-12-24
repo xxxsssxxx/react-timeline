@@ -1,0 +1,20 @@
+.tooltip {
+  width: 5rem;
+  max-width: 10rem;
+  color: #ffffff;
+  text-align: center;
+  border-radius: 10px;
+  top: calc(100% + 11px);
+  left: 50%;
+  transform: translateX(-50%);
+  position: absolute;
+}
+.triangle {
+  border-width: 0 6px 6px;
+  border-color: transparent;
+  border-bottom-color: #383c63;
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
