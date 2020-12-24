@@ -103,7 +103,7 @@
     "coverageReporters": [
       "text",
       "text-summary",
-      "icov"
+      "lcov"
     ]
   },
   "browserslist": {
