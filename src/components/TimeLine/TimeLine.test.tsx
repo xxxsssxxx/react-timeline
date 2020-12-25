@@ -3,7 +3,6 @@ import TimeLine from "./TimeLine";
 
 import { blocks } from "../../mocks/mocks";
 import { IBlock } from "../../interfaces/interfaces";
-import { off } from "process";
 
 describe("TimeLine", () => {
   let mockBlocks: IBlock[];
@@ -81,3 +80,4 @@ describe("TimeLine", () => {
       });
     });
 });
+
