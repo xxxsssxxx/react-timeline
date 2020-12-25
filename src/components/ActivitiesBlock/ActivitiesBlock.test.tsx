@@ -69,7 +69,7 @@ describe("Activity", () => {
     test("Returns sideClass for activity with right side", async() => {
       render(<ActivitiesBlock activities={mockActivities} blockText={blocks[0].blockText} folded={false}/>);
       const activities = await screen.findAllByTestId("activity-wrapper");
-      const onALeft = activities[activities.length - 1].className.includes("flex-row-reverse");
+      const onALeft = activities[2].className.includes("flex-row-reverse");
       expect(onALeft).toBe(false);
     });
   });
@@ -103,5 +103,32 @@ describe("Activity", () => {
         expect(tooltip).toBe(null);
       });
   });
+
+    describe("Loading more", () => {
+      test("Show load button if activities are more then limit", async() => {
+        render(<ActivitiesBlock activities={mockActivities} blockText={blocks[0].blockText} folded={false}/>);
+        const loadMore = await screen.findByTestId("load-more-activities");
+        expect(loadMore).not.toBeNull();
+      });
+      test("Doesnt show load button if activities are less then limit", () => {
+        mockActivities.length = 4;
+        render(<ActivitiesBlock activities={mockActivities} blockText={blocks[0].blockText} folded={false}/>);
+        const loadMore = screen.queryByTestId("load-more-activities");
+        expect(loadMore).toBeNull();
+      });
+      test("Load all next activities by offset", async() => {
+        const defaultOffset = 5;
+        const defaultMax = 5;
+        render(<ActivitiesBlock activities={mockActivities} blockText={blocks[0].blockText} folded={false}/>);
+        let activities = await screen.findAllByTestId("activity-wrapper");
+        expect(activities).toHaveLength(defaultMax);
+
+        const loadMore = await screen.findByTestId("load-more-activities");
+        loadMore.firstChild && fireEvent.click(loadMore.firstChild);
+
+        activities = await screen.findAllByTestId("activity-wrapper");
+        expect(activities).toHaveLength(defaultOffset + defaultMax);
+      });
+    });
 
 });

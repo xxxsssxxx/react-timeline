@@ -1,7 +1,9 @@
 export interface IBlock {
-  activities: IActivity[],
-  blockText: string | number,
-  index?: number
+  activities: IActivity[];
+  blockText: string | number;
+  index?: number;
+  max?: number;
+  offset?: number;
 }
 
 export interface IActivity {
@@ -26,4 +28,10 @@ export interface IAssignee {
   href?: string,
   avatar?: string,
   className?: string
+}
+
+export interface IButtonTypes {
+  primary: string,
+  success: string,
+  danger: string
 }

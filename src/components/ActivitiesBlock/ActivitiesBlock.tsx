@@ -4,21 +4,28 @@ import { IActivity } from "../../interfaces/interfaces";
 
 import Activity from "../Activity/Activity";
 import BaseTooltip from "../Base/Tooltip/BaseTooltip";
+import BaseButton from "../Base/Button/BaseButton";
 
 type Props = {
   activities: IActivity[];
   index?: number;
   blockText: string | number;
   folded?: boolean;
+  maxActivities?: number;
+  activitiesOffset?: number
 };
 
-interface StringMap {
-  [key: string]: boolean;
-}
-
-const ActivitiesBlock: FC<Props> = ({ activities, blockText, folded }) => {
+const ActivitiesBlock: FC<Props> = ({
+  activities,
+  blockText,
+  folded,
+  maxActivities = 5,
+  activitiesOffset = 5
+}) => {
   const [showCount, setShowCount] = useState(false);
-  const [showActivities, setShowActivities] = useState({ [blockText]: !folded } as StringMap);
+  const [showActivities, setShowActivities] = useState(!folded);
+  const [activitiesLimit, setActivitiesLimit] = useState(maxActivities);
+
   const classes = {
     wrapper: (
       className: string | undefined,
@@ -42,23 +49,22 @@ const ActivitiesBlock: FC<Props> = ({ activities, blockText, folded }) => {
     setShowCount(!showCount);
   };
 
-  const toggleActivities = (e?: MouseEvent, show?: boolean): void => {
-    setShowActivities(
-      (prevState): StringMap => {
-        let showActivities = { ...prevState };
-        showActivities[blockText] = !showActivities[blockText];
-        return showActivities;
-      }
-    );
+  const loadMoreActivities = () => {
+    setActivitiesLimit((prevSatate) => prevSatate + activitiesOffset);
+  };
+
+  const toggleActivities = (): void => {
+    setShowActivities(!showActivities);
   };
 
   return (
     <div
-      className="block-wrapper mt-20 cursor-pointer relative"
+      className="block-wrapper mt-20 cursor-pointer relative flex flex-col items-center"
       data-testid="activities-block"
     >
-      {showActivities[blockText]
+      {showActivities
         ? activities.map((activity, i) => {
+            if (activitiesLimit && i >= activitiesLimit) return null;
             const { className, side } = activity;
             return (
               <div
@@ -76,9 +82,21 @@ const ActivitiesBlock: FC<Props> = ({ activities, blockText, folded }) => {
           })
         : null}
       {showCount ? <BaseTooltip text={activities.length} /> : null}
+      {activities.length > activitiesLimit && showActivities ? (
+        <div
+          className="button-wrapper mx-auto"
+          data-testid="load-more-activities"
+        >
+          <BaseButton
+            type={"primary"}
+            text={"More"}
+            click={loadMoreActivities}
+          />
+        </div>
+      ) : null}
       <div
         data-testid="bullet"
-        className={classes.indexes.wrapper}
+        className={`${classes.indexes.wrapper} min-w-2`}
         onMouseEnter={showActivitiesCount}
         onMouseLeave={showActivitiesCount}
         onClick={toggleActivities}
