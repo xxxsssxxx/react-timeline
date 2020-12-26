@@ -14,3 +14,8 @@ export enum EType {
   NUMERIC = "numeric",
   TIMING = "timing"
 }
+
+export enum EOrder {
+  ASC = "asc",
+  DESC = "desc"
+}

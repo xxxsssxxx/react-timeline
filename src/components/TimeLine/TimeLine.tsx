@@ -3,6 +3,7 @@ import ActivitiesBlock from "../ActivitiesBlock/ActivitiesBlock";
 import Tools from "../Tool/Tools";
 import { IActivity, IBlock } from "../../interfaces/interfaces";
 import BaseButton from "../Base/Button/BaseButton";
+import { EOrder } from "../../enums/enums";
 type Props = {
   activities?: IActivity[];
   showTools?: boolean;
@@ -13,6 +14,8 @@ type Props = {
   maxActivities?: number;
   blocksOffset?: number;
   activitiesOffset?: number;
+  auto?: boolean;
+  order?: string;
 };
 const TimeLine: FC<Props> = ({
   blocks,
@@ -21,7 +24,9 @@ const TimeLine: FC<Props> = ({
   maxBlocks = 5,
   maxActivities,
   blocksOffset = 5,
-  activitiesOffset
+  activitiesOffset,
+  auto = false,
+  order = EOrder.DESC
 }) => {
   const [toolsTitle] = useState("Tools to play");
   const [moreButtonText] = useState("more");
@@ -30,6 +35,20 @@ const TimeLine: FC<Props> = ({
   const loadMoreBlocks = () => {
     setBlockLimit((prevSatate) => prevSatate + blocksOffset);
   };
+
+  const mapBlocks = (blocks: IBlock[]): IBlock[] => {
+    const mapped: IBlock[] = blocks.sort((a, b) => {
+      const aDate = new Date(a.blockText)?.getTime();
+      const bDate = new Date(b.blockText)?.getTime();
+      if (order === EOrder.DESC){
+        return bDate - aDate;
+      }
+      return aDate - bDate;
+    });
+    return mapped;
+  };
+
+  const mappedBlocks: IBlock[] = auto ? mapBlocks(blocks) : blocks;
 
   return (
     <div
@@ -42,7 +61,7 @@ const TimeLine: FC<Props> = ({
           className="border-2-2 absolute border-opacity-20 border-gray-700 h-full border"
           style={{ left: "50%" }}
         ></div>
-        {blocks.map(({ activities, blockText, max, offset }, i) => {
+        {mappedBlocks.map(({ activities, blockText, max, offset }, i) => {
           if (i >= blockLimit) return null;
           return (
             <ActivitiesBlock
@@ -58,7 +77,11 @@ const TimeLine: FC<Props> = ({
       </div>
       {blocks.length > blockLimit ? (
         <div className="button-wrapper mx-auto" data-testid="load-more-blocks">
-          <BaseButton type={"primary"} text={moreButtonText} click={loadMoreBlocks}/>
+          <BaseButton
+            type={"primary"}
+            text={moreButtonText}
+            click={loadMoreBlocks}
+          />
         </div>
       ) : null}
     </div>
