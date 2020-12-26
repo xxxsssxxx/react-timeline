@@ -49,8 +49,8 @@ const TimeLine: FC<Props> = ({
               activities={activities}
               blockText={blockText}
               folded={!!folded}
-              maxActivities={maxActivities || max}
-              activitiesOffset={activitiesOffset || offset}
+              maxActivities={max || maxActivities}
+              activitiesOffset={offset || activitiesOffset}
               key={i}
             />
           );
