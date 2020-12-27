@@ -1,10 +1,10 @@
 import React from "react";
 import TimeLine from "./components/TimeLine/TimeLine";
 
-import { EType } from "./enums/enums";
+import { EOrder, EType } from "./enums/enums";
 
 
-import { blocks } from "./mocks/mocks";
+import { blocks, shuffle } from "./mocks/mocks";
 
 const App = () => {
   const title: string = "React timeline";
@@ -17,7 +17,7 @@ const App = () => {
         <h1 title={title} className="text-center text-2xl">
           {title}
         </h1>
-        <TimeLine blocks={blocks} showTools={showTools} type={type} folded={true} />
+        <TimeLine blocks={shuffle(blocks)} showTools={showTools} type={type} folded={true} auto={true} order={EOrder.DESC}/>
       </div>
     </div>
   );

@@ -33,7 +33,7 @@ const ActivitiesBlock: FC<Props> = ({
     ): string =>
       `activity-wrapper mb-8 flex justify-between items-center w-full ${sideClass(
         side
-      )} ${className || ""}`,
+      )} ${className || ""} cursor-default`,
     indexes: {
       wrapper:
         "z-20 flex items-center order-1 bg-gray-800 mx-auto shadow-md max-w-1 h-8 rounded-full transform hover:-translate-y-1 hover:scale-110 transition duration-200 ease-linear",
