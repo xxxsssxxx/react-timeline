@@ -1,8 +1,9 @@
 import { cleanup, render, screen, fireEvent } from "@testing-library/react";
 import TimeLine from "./TimeLine";
 
-import { blocks } from "../../mocks/mocks";
+import { blocks, shuffle } from "../../mocks/mocks";
 import { IBlock } from "../../interfaces/interfaces";
+import { EOrder } from "../../enums/enums";
 
 describe("TimeLine", () => {
   let mockBlocks: IBlock[];
@@ -99,6 +100,26 @@ describe("TimeLine", () => {
 
         blocks = await screen.findAllByTestId("activities-block");
         expect(blocks).toHaveLength(defaultOffset + defaultMax);
+      });
+    });
+
+    describe("Auto order blocks", () => {
+      test("Order blocks ASC if props is asc", async() => {
+        const blocks = shuffle([...mockBlocks]);
+        render(<TimeLine blocks={blocks} auto={true} order={EOrder.ASC} maxBlocks={mockBlocks.length} />);
+        const screenBlocks = await screen.findAllByTestId("activities-block");
+        screenBlocks.forEach((block, i) => {
+          expect(block.textContent).toEqual(mockBlocks[i].blockText);
+        });
+      });
+      test("Order blocks DESC if props is DESC", async() => {
+        const blocks = shuffle([...mockBlocks]);
+        render(<TimeLine blocks={blocks} auto={true} order={EOrder.DESC} maxBlocks={mockBlocks.length} />);
+        const screenBlocks = await screen.findAllByTestId("activities-block");
+        const reversedMock = mockBlocks.reverse();
+        screenBlocks.forEach((block, i) => {
+          expect(block.textContent).toEqual(reversedMock[i].blockText);
+        });
       });
     });
 });

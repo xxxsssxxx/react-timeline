@@ -37,13 +37,19 @@ const TimeLine: FC<Props> = ({
   };
 
   const mapBlocks = (blocks: IBlock[]): IBlock[] => {
-    const mapped: IBlock[] = blocks.sort((a, b) => {
-      const aDate = new Date(a.blockText)?.getTime();
-      const bDate = new Date(b.blockText)?.getTime();
-      if (order === EOrder.DESC){
-        return bDate - aDate;
+    const mapped: IBlock[] = blocks.sort((a: IBlock, b: IBlock) => {
+      if (a.date && b.date) {
+        const aDate = new Date(a.date)?.getTime();
+        const bDate = new Date(b.date)?.getTime();
+        if (order === EOrder.DESC) {
+          return bDate - aDate;
+        }
+        return aDate - bDate;
       }
-      return aDate - bDate;
+      if (order === EOrder.DESC) {
+        return b.blockText.localeCompare(a.blockText);
+      }
+      return a.blockText.localeCompare(b.blockText);
     });
     return mapped;
   };

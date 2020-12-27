@@ -1,9 +1,10 @@
 export interface IBlock {
   activities: IActivity[];
-  blockText: string | number;
+  blockText: string;
   index?: number;
   max?: number;
   offset?: number;
+  date?: Date
 }
 
 export interface IActivity {
