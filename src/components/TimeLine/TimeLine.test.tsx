@@ -104,7 +104,9 @@ describe("TimeLine", () => {
     });
 
     describe("Auto order blocks", () => {
-      test("Order blocks ASC if props is asc", async() => {
+      const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+      test("Order blocks by date ASC if props is asc", async() => {
         const blocks = shuffle([...mockBlocks]);
         render(<TimeLine blocks={blocks} auto={true} order={EOrder.ASC} maxBlocks={mockBlocks.length} />);
         const screenBlocks = await screen.findAllByTestId("activities-block");
@@ -112,13 +114,43 @@ describe("TimeLine", () => {
           expect(block.textContent).toEqual(mockBlocks[i].blockText);
         });
       });
-      test("Order blocks DESC if props is DESC", async() => {
+      test("Order blocks by date DESC if props is DESC", async() => {
         const blocks = shuffle([...mockBlocks]);
         render(<TimeLine blocks={blocks} auto={true} order={EOrder.DESC} maxBlocks={mockBlocks.length} />);
         const screenBlocks = await screen.findAllByTestId("activities-block");
         const reversedMock = mockBlocks.reverse();
         screenBlocks.forEach((block, i) => {
           expect(block.textContent).toEqual(reversedMock[i].blockText);
+        });
+      });
+
+      test("Order blocks by text ASC if props is ASC", async() => {
+        const blocks = shuffle([...mockBlocks]);
+        const expectedSort = months.sort((a, b) => a.localeCompare(b));
+        // Just for testing purposes filling with some text
+        blocks.forEach((block, i) => {
+          delete block.date;
+          block.blockText = months[i];
+        });
+        render(<TimeLine blocks={blocks} auto={true} order={EOrder.ASC} maxBlocks={mockBlocks.length} />);
+        const screenBlocks = await screen.findAllByTestId("activities-block");
+        screenBlocks.forEach((block, i) => {
+          expect(block.textContent).toEqual(expectedSort[i]);
+        });
+      });
+
+      test("Order blocks by text DESC if props is DESC", async() => {
+        const blocks = shuffle([...mockBlocks]);
+        const expectedSort = months.sort((a, b) => b.localeCompare(a));
+        // Just for testing purposes filling with some text
+        blocks.forEach((block, i) => {
+          delete block.date;
+          block.blockText = months[i];
+        });
+        render(<TimeLine blocks={blocks} auto={true} order={EOrder.DESC} maxBlocks={mockBlocks.length} />);
+        const screenBlocks = await screen.findAllByTestId("activities-block");
+        screenBlocks.forEach((block, i) => {
+          expect(block.textContent).toEqual(expectedSort[i]);
         });
       });
     });
