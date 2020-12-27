@@ -1,5 +1,5 @@
 import { FC, useState, MouseEvent } from "react";
-import { ESide } from "../../enums/enums";
+import { ESide, EOrder } from "../../enums/enums";
 import { IActivity } from "../../interfaces/interfaces";
 
 import Activity from "../Activity/Activity";
@@ -9,10 +9,12 @@ import BaseButton from "../Base/Button/BaseButton";
 type Props = {
   activities: IActivity[];
   index?: number;
-  blockText: string | number;
+  blockText: string | Date;
   folded?: boolean;
   maxActivities?: number;
-  activitiesOffset?: number
+  activitiesOffset?: number;
+  activitiesOrder?: string;
+  autoActivities?: boolean
 };
 
 const ActivitiesBlock: FC<Props> = ({
@@ -20,7 +22,9 @@ const ActivitiesBlock: FC<Props> = ({
   blockText,
   folded,
   maxActivities = 5,
-  activitiesOffset = 5
+  activitiesOffset = 5,
+  activitiesOrder = EOrder.DESC,
+  autoActivities = false
 }) => {
   const [showCount, setShowCount] = useState(false);
   const [showActivities, setShowActivities] = useState(!folded);
@@ -65,7 +69,7 @@ const ActivitiesBlock: FC<Props> = ({
       {showActivities
         ? activities.map((activity, i) => {
             if (activitiesLimit && i >= activitiesLimit) return null;
-            const { className, side } = activity;
+            let { className, side } = activity;
             return (
               <div
                 className={classes.wrapper(className, side)}

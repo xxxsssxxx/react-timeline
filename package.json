@@ -88,6 +88,9 @@
       "src/*.{js,jsx,ts,tsx}",
       "!src/*.*.d*",
       "!src/index.tsx",
+      "!src/App.tsx",
+      "!src/enums/*.*",
+      "!src/interfaces/*.*",
       "!src/serviceWorkers/*",
       "!<rootDir>/node_modules/",
       "!<rootDir>/path/to/dir/"

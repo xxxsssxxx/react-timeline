@@ -1,8 +1,9 @@
 import React from "react";
 import BaseTag from "../Base/Tag/BaseTag";
-
-import { IActivity } from "../../interfaces/interfaces";
 import BasePerson from "../Base/Person/BasePerson";
+
+import { dateFormating } from "../../Utils/utils";
+import { IActivity } from "../../interfaces/interfaces";
 
 type Props = {
   activity: IActivity;
@@ -47,7 +48,7 @@ const Activity: React.FC<Props> = ({ activity }) => {
         <div className="activity-assignee">
           <BasePerson person={assignee} />
         </div>
-        <span className="activity-date"> {date}</span>
+        <span className="activity-date block text-right">{dateFormating(date)}</span>
       </div>
     </div>
   );

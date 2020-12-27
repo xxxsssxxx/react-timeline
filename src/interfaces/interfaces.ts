@@ -1,16 +1,15 @@
 export interface IBlock {
   activities: IActivity[];
-  blockText: string;
+  blockText: string | Date;
   index?: number;
   max?: number;
   offset?: number;
-  date?: Date
 }
 
 export interface IActivity {
   text: string,
   href?: string,
-  date: string,
+  date: Date,
   tags: ITag[],
   assignee: IAssignee,
   className?: string,

@@ -1,9 +1,10 @@
-import { useState, FC } from "react";
+import { useState, useMemo, FC } from "react";
 import ActivitiesBlock from "../ActivitiesBlock/ActivitiesBlock";
 import Tools from "../Tool/Tools";
 import { IActivity, IBlock } from "../../interfaces/interfaces";
 import BaseButton from "../Base/Button/BaseButton";
 import { EOrder } from "../../enums/enums";
+import { dateFormating, isDateObject } from "../../Utils/utils";
 type Props = {
   activities?: IActivity[];
   showTools?: boolean;
@@ -15,11 +16,12 @@ type Props = {
   blocksOffset?: number;
   activitiesOffset?: number;
   auto?: boolean;
+  autoActivities?: boolean;
   blocksOrder?: string;
   activitiesOrder?: string;
 };
 const TimeLine: FC<Props> = ({
-  blocks,
+  blocks = [],
   showTools = true,
   folded = true,
   maxBlocks = 5,
@@ -27,6 +29,7 @@ const TimeLine: FC<Props> = ({
   blocksOffset = 5,
   activitiesOffset,
   auto = false,
+  autoActivities = false,
   blocksOrder = EOrder.DESC,
   activitiesOrder = EOrder.DESC
 }) => {
@@ -38,23 +41,39 @@ const TimeLine: FC<Props> = ({
     setBlockLimit((prevSatate) => prevSatate + blocksOffset);
   };
 
-  const mapBlocks = (blocks: IBlock[]): IBlock[] => {
-    const mapped: IBlock[] = blocks.sort((a: IBlock, b: IBlock) => {
-      if (a.date && b.date) {
-        const aDate = new Date(a.date)?.getTime();
-        const bDate = new Date(b.date)?.getTime();
-        if (blocksOrder === EOrder.DESC) {
-          return bDate - aDate;
+  const mapBlocks = useMemo(
+    () => (blocks: IBlock[]): IBlock[] => {
+      const mapped: IBlock[] = blocks.sort((a: IBlock, b: IBlock) => {
+        if (isDateObject(a.blockText) && isDateObject(b.blockText)) {
+          const aDate = new Date(a.blockText).getTime();
+          const bDate = new Date(b.blockText).getTime();
+          if (blocksOrder === EOrder.DESC) {
+            return bDate - aDate;
+          }
+          return aDate - bDate;
         }
-        return aDate - bDate;
-      }
-      if (blocksOrder === EOrder.DESC) {
-        return b.blockText.localeCompare(a.blockText);
-      }
-      return a.blockText.localeCompare(b.blockText);
-    });
-    return mapped;
-  };
+
+        if (
+          typeof a.blockText === "string" &&
+          typeof b.blockText === "string"
+        ) {
+          if (blocksOrder === EOrder.DESC) {
+            return b.blockText.localeCompare(a.blockText);
+          }
+          return a.blockText.localeCompare(b.blockText);
+        }
+        return 1;
+      }).map((block) => {
+        const { blockText } = block;
+        if (isDateObject(blockText)) {
+          return { ...block, blockText: dateFormating(blockText, false)};
+        }
+        return block;
+      });
+      return mapped;
+    },
+    [blocksOrder]
+  );
 
   const mappedBlocks: IBlock[] = auto ? mapBlocks(blocks) : blocks;
 
@@ -78,6 +97,8 @@ const TimeLine: FC<Props> = ({
               folded={!!folded}
               maxActivities={max || maxActivities}
               activitiesOffset={offset || activitiesOffset}
+              activitiesOrder={activitiesOrder}
+              autoActivities={autoActivities}
               key={i}
             />
           );
