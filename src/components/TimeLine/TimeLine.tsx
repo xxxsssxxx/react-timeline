@@ -15,7 +15,8 @@ type Props = {
   blocksOffset?: number;
   activitiesOffset?: number;
   auto?: boolean;
-  order?: string;
+  blocksOrder?: string;
+  activitiesOrder?: string;
 };
 const TimeLine: FC<Props> = ({
   blocks,
@@ -26,7 +27,8 @@ const TimeLine: FC<Props> = ({
   blocksOffset = 5,
   activitiesOffset,
   auto = false,
-  order = EOrder.DESC
+  blocksOrder = EOrder.DESC,
+  activitiesOrder = EOrder.DESC
 }) => {
   const [toolsTitle] = useState("Tools to play");
   const [moreButtonText] = useState("more");
@@ -41,12 +43,12 @@ const TimeLine: FC<Props> = ({
       if (a.date && b.date) {
         const aDate = new Date(a.date)?.getTime();
         const bDate = new Date(b.date)?.getTime();
-        if (order === EOrder.DESC) {
+        if (blocksOrder === EOrder.DESC) {
           return bDate - aDate;
         }
         return aDate - bDate;
       }
-      if (order === EOrder.DESC) {
+      if (blocksOrder === EOrder.DESC) {
         return b.blockText.localeCompare(a.blockText);
       }
       return a.blockText.localeCompare(b.blockText);

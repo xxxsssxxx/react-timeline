@@ -17,7 +17,7 @@ const App = () => {
         <h1 title={title} className="text-center text-2xl">
           {title}
         </h1>
-        <TimeLine blocks={shuffle(blocks)} showTools={showTools} type={type} folded={true} auto={true} order={EOrder.DESC}/>
+        <TimeLine blocks={shuffle(blocks)} showTools={showTools} type={type} folded={true} auto={true} blocksOrder={EOrder.DESC} />
       </div>
     </div>
   );

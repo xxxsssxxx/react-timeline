@@ -108,7 +108,7 @@ describe("TimeLine", () => {
 
       test("Order blocks by date ASC if props is asc", async() => {
         const blocks = shuffle([...mockBlocks]);
-        render(<TimeLine blocks={blocks} auto={true} order={EOrder.ASC} maxBlocks={mockBlocks.length} />);
+        render(<TimeLine blocks={blocks} auto={true} blocksOrder={EOrder.ASC} maxBlocks={mockBlocks.length} />);
         const screenBlocks = await screen.findAllByTestId("activities-block");
         screenBlocks.forEach((block, i) => {
           expect(block.textContent).toEqual(mockBlocks[i].blockText);
@@ -116,7 +116,7 @@ describe("TimeLine", () => {
       });
       test("Order blocks by date DESC if props is DESC", async() => {
         const blocks = shuffle([...mockBlocks]);
-        render(<TimeLine blocks={blocks} auto={true} order={EOrder.DESC} maxBlocks={mockBlocks.length} />);
+        render(<TimeLine blocks={blocks} auto={true} blocksOrder={EOrder.DESC} maxBlocks={mockBlocks.length} />);
         const screenBlocks = await screen.findAllByTestId("activities-block");
         const reversedMock = mockBlocks.reverse();
         screenBlocks.forEach((block, i) => {
@@ -132,7 +132,7 @@ describe("TimeLine", () => {
           delete block.date;
           block.blockText = months[i];
         });
-        render(<TimeLine blocks={blocks} auto={true} order={EOrder.ASC} maxBlocks={mockBlocks.length} />);
+        render(<TimeLine blocks={blocks} auto={true} blocksOrder={EOrder.ASC} maxBlocks={mockBlocks.length} />);
         const screenBlocks = await screen.findAllByTestId("activities-block");
         screenBlocks.forEach((block, i) => {
           expect(block.textContent).toEqual(expectedSort[i]);
@@ -147,7 +147,7 @@ describe("TimeLine", () => {
           delete block.date;
           block.blockText = months[i];
         });
-        render(<TimeLine blocks={blocks} auto={true} order={EOrder.DESC} maxBlocks={mockBlocks.length} />);
+        render(<TimeLine blocks={blocks} auto={true} blocksOrder={EOrder.DESC} maxBlocks={mockBlocks.length} />);
         const screenBlocks = await screen.findAllByTestId("activities-block");
         screenBlocks.forEach((block, i) => {
           expect(block.textContent).toEqual(expectedSort[i]);
