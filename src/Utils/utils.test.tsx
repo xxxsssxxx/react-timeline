@@ -1,4 +1,6 @@
-import { dateFormating } from "./utils";
+import { EOrder } from "../enums/enums";
+import { addDays } from "../mocks/mocks";
+import { dateFormating, sortDates, sortString } from "./utils";
 
 describe("Format date", () => {
 
@@ -17,5 +19,33 @@ describe("Format date", () => {
     const date = dateFormating(new Date(), false);
     expect(date).toBeDefined();
     expect(date).toHaveLength(10);
+  });
+});
+
+describe("Sort", () => {
+  describe("Dates", () => {
+
+    test("Asc", () => {
+      const ascSort = sortDates(new Date(), addDays(4), EOrder.ASC);
+      expect(ascSort).toBeLessThan(0);
+    });
+
+    test("Desc", () => {
+      const descSort = sortDates(new Date(), addDays(4), EOrder.DESC);
+      expect(descSort).toBeGreaterThan(0);
+    });
+  });
+
+  describe("Strings", () => {
+
+    test("Asc", () => {
+      const ascSort = sortString("A", "B", EOrder.ASC);
+      expect(ascSort).toBeLessThan(0);
+    });
+
+    test("Desc", () => {
+      const descSort = sortString("A", "B", EOrder.DESC);
+      expect(descSort).toBeGreaterThan(0);
+    });
   });
 });

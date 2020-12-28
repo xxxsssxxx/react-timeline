@@ -3,6 +3,16 @@ import { ESide, EPriority } from "../enums/enums";
 import { Schemes } from "../schemes/schemes";
 import { dateFormating } from "../Utils/utils";
 
+export const addMinutes = (date: Date, minutes: number): Date => {
+  return new Date(date.getTime() + minutes * 60000);
+};
+
+export const addDays = (days: number): Date => {
+  const result = new Date();
+  result.setDate(result.getDate() + days);
+  return new Date(result);
+};
+
 export const activities: IActivity[] = [
   {
     text: "Went for a walk",
@@ -202,8 +212,6 @@ export const activities: IActivity[] = [
   }
 ];
 
-
-
 export const blocks: IBlock[] = [
   { blockText: new Date(), activities },
   { blockText: addDays(4), activities },
@@ -242,16 +250,6 @@ export const blocksText: IBlock[] = [
   { blockText: addDays(45).toLocaleString("default", { month: "long" }), activities },
   { blockText: addDays(47).toLocaleString("default", { month: "long" }), activities }
 ];
-
-function addDays(days: number): Date {
-  const result = new Date();
-  result.setDate(result.getDate() + days);
-  return new Date(result);
-};
-
-function addMinutes(date: Date, minutes: number): Date {
-  return new Date(date.getTime() + minutes * 60000);
-}
 
 export const shuffle = (a: any[]): any[] => {
   for (let i = a.length - 1; i > 0; i--) {
