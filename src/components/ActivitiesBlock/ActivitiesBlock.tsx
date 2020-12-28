@@ -44,10 +44,7 @@ const ActivitiesBlock: FC<Props> = ({
   const mapActivities = useMemo(() => (activities: IActivity[]): IActivity[] => {
     let currentSide: string = ESide.RIGHT;
     const mapped: IActivity[] = activities.sort((a, b) => {
-      if (isDateObject(a.date) && isDateObject(b.date)) {
-        return sortDates(a.date, b.date, activitiesOrder);
-      }
-      return 1;
+      return sortDates(a.date, b.date, activitiesOrder);
     }).map((activity, i) => {
       const { date } = activity;
       const prev: IActivity = activities[i - 1] || null;
