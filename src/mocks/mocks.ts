@@ -20,7 +20,7 @@ export const activities: IActivity[] = [
   },
   {
     text: "Take out trash",
-    date: new Date(),
+    date: addMinutes(new Date(), 30),
     tags: [
       {
         name: "Home",
@@ -33,7 +33,7 @@ export const activities: IActivity[] = [
   },
   {
     text: "Pay the phone bill",
-    date: new Date(),
+    date: addMinutes(new Date(), 30),
     tags: [
       {
         name: "Work",
@@ -70,7 +70,7 @@ export const activities: IActivity[] = [
   },
   {
     text: "Take out trash",
-    date: new Date(),
+    date: addMinutes(new Date(), 45),
     tags: [
       {
         name: "Home",
@@ -83,7 +83,7 @@ export const activities: IActivity[] = [
   },
   {
     text: "Pay the phone bill",
-    date: new Date(),
+    date: addMinutes(new Date(), 42),
     tags: [
       {
         name: "Work",
@@ -106,7 +106,7 @@ export const activities: IActivity[] = [
   },
   {
     text: "Pay the phone bill",
-    date: new Date(),
+    date: addMinutes(new Date(), 50),
     tags: [
       {
         name: "Work",
@@ -130,7 +130,7 @@ export const activities: IActivity[] = [
   {
     text: "Went for a walk",
     href: "https://google.com",
-    date: new Date(),
+    date: addMinutes(new Date(), 50),
     tags: [
       {
         name: "Work",
@@ -143,7 +143,7 @@ export const activities: IActivity[] = [
   },
   {
     text: "Take out trash",
-    date: new Date(),
+    date: addMinutes(new Date(), 12),
     tags: [
       {
         name: "Home",
@@ -179,7 +179,7 @@ export const activities: IActivity[] = [
   },
   {
     text: "Pay the phone bill",
-    date: new Date(),
+    date: addMinutes(new Date(), 45),
     tags: [
       {
         name: "Work",
@@ -248,6 +248,10 @@ function addDays(days: number): Date {
   result.setDate(result.getDate() + days);
   return new Date(result);
 };
+
+function addMinutes(date: Date, minutes: number): Date {
+  return new Date(date.getTime() + minutes * 60000);
+}
 
 export const shuffle = (a: any[]): any[] => {
   for (let i = a.length - 1; i > 0; i--) {

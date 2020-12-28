@@ -28,7 +28,7 @@ const App = () => {
           type={type}
           folded={true}
           auto={auto}
-          blocksOrder={EOrder.ASC}
+          blocksOrder={EOrder.DESC}
         />
       </div>
     </div>

@@ -4,7 +4,7 @@ import Tools from "../Tool/Tools";
 import { IActivity, IBlock } from "../../interfaces/interfaces";
 import BaseButton from "../Base/Button/BaseButton";
 import { EOrder } from "../../enums/enums";
-import { dateFormating, isDateObject } from "../../Utils/utils";
+import { dateFormating, isDateObject, sortDates, sortString } from "../../Utils/utils";
 type Props = {
   activities?: IActivity[];
   showTools?: boolean;
@@ -45,28 +45,18 @@ const TimeLine: FC<Props> = ({
     () => (blocks: IBlock[]): IBlock[] => {
       const mapped: IBlock[] = blocks.sort((a: IBlock, b: IBlock) => {
         if (isDateObject(a.blockText) && isDateObject(b.blockText)) {
-          const aDate = new Date(a.blockText).getTime();
-          const bDate = new Date(b.blockText).getTime();
-          if (blocksOrder === EOrder.DESC) {
-            return bDate - aDate;
-          }
-          return aDate - bDate;
+          return sortDates(a.blockText, b.blockText, blocksOrder);
         }
 
-        if (
-          typeof a.blockText === "string" &&
-          typeof b.blockText === "string"
-        ) {
-          if (blocksOrder === EOrder.DESC) {
-            return b.blockText.localeCompare(a.blockText);
-          }
-          return a.blockText.localeCompare(b.blockText);
+        if (typeof a.blockText === "string" && typeof b.blockText === "string") {
+          return sortString(a.blockText, b.blockText, blocksOrder);
         }
+
         return 1;
       }).map((block) => {
         const { blockText } = block;
         if (isDateObject(blockText)) {
-          return { ...block, blockText: dateFormating(blockText, false)};
+          return { ...block, blockText: dateFormating(blockText, false) };
         }
         return block;
       });
