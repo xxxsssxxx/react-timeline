@@ -15,7 +15,7 @@ type Props = {
   maxActivities?: number;
   blocksOffset?: number;
   activitiesOffset?: number;
-  auto?: boolean;
+  autoBlocks?: boolean;
   autoActivities?: boolean;
   blocksOrder?: string;
   activitiesOrder?: string;
@@ -28,7 +28,7 @@ const TimeLine: FC<Props> = ({
   maxActivities,
   blocksOffset = 5,
   activitiesOffset,
-  auto = false,
+  autoBlocks = false,
   autoActivities = false,
   blocksOrder = EOrder.DESC,
   activitiesOrder = EOrder.DESC
@@ -65,7 +65,7 @@ const TimeLine: FC<Props> = ({
     [blocksOrder]
   );
 
-  const mappedBlocks: IBlock[] = auto ? mapBlocks(blocks) : blocks;
+  const mappedBlocks: IBlock[] = autoBlocks ? mapBlocks(blocks) : blocks;
 
   return (
     <div
@@ -78,7 +78,7 @@ const TimeLine: FC<Props> = ({
           className="border-2-2 absolute border-opacity-20 border-gray-700 h-full border"
           style={{ left: "50%" }}
         ></div>
-        {mappedBlocks.map(({ activities, blockText, max, offset }, i) => {
+        {mappedBlocks.map(({ activities, blockText, max, offset, order, auto }, i) => {
           if (i >= blockLimit) return null;
           return (
             <ActivitiesBlock
@@ -87,8 +87,8 @@ const TimeLine: FC<Props> = ({
               folded={!!folded}
               maxActivities={max || maxActivities}
               activitiesOffset={offset || activitiesOffset}
-              activitiesOrder={activitiesOrder}
-              autoActivities={autoActivities}
+              activitiesOrder={order || activitiesOrder}
+              autoActivities={auto || autoActivities}
               key={i}
             />
           );

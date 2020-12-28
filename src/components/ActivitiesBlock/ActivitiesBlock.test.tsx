@@ -167,7 +167,7 @@ describe("Activity", () => {
 
   describe("Auto arrange", () => {
 
-    test("Dont do auto arrange if autoActivities is false", async() => {
+    test("Dont do autoBlocks arrange if autoActivities is false", async() => {
       render(<ActivitiesBlock activities={mockActivities} blockText={blocksAutoFalse[0].blockText} folded={false} />);
       const activities = await screen.findAllByTestId("activity-wrapper");
       const onALeft = activities[0].className.includes("flex-row-reverse");

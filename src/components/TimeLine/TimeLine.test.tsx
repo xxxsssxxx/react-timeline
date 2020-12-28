@@ -142,7 +142,7 @@ describe("TimeLine", () => {
         const blocks = shuffle([...mockBlocks]);
         blocks[6].blockText = 55;
         render(
-          <TimeLine blocks={blocks} auto={true} maxBlocks={mockBlocks.length} blocksOrder={EOrder.ASC} />
+          <TimeLine blocks={blocks} autoBlocks={true} maxBlocks={mockBlocks.length} blocksOrder={EOrder.ASC} />
         );
         const screenBlocks = await screen.findAllByTestId("activities-block");
         expect(screenBlocks[6].textContent).toEqual(`${blocks[6].blockText}`);
@@ -153,7 +153,7 @@ describe("TimeLine", () => {
         render(
           <TimeLine
             blocks={blocks}
-            auto={true}
+            autoBlocks={true}
             blocksOrder={EOrder.ASC}
             maxBlocks={mockBlocks.length}
           />
@@ -172,7 +172,7 @@ describe("TimeLine", () => {
         render(
           <TimeLine
             blocks={blocks}
-            auto={true}
+            autoBlocks={true}
             blocksOrder={EOrder.DESC}
             maxBlocks={mockBlocks.length}
           />
@@ -195,7 +195,7 @@ describe("TimeLine", () => {
         render(
           <TimeLine
             blocks={blocks}
-            auto={true}
+            autoBlocks={true}
             blocksOrder={EOrder.ASC}
             maxBlocks={mockBlocks.length}
           />
@@ -217,7 +217,7 @@ describe("TimeLine", () => {
         render(
           <TimeLine
             blocks={blocks}
-            auto={true}
+            autoBlocks={true}
             blocksOrder={EOrder.DESC}
             maxBlocks={mockBlocks.length}
           />

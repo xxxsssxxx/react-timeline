@@ -4,6 +4,8 @@ export interface IBlock {
   index?: number;
   max?: number;
   offset?: number;
+  order?: string;
+  auto?: boolean;
 }
 
 export interface IActivity {

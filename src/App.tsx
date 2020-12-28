@@ -11,10 +11,10 @@ const App = () => {
   const title: string = "React timeline";
   let showTools: boolean = true;
   let type: string = EType.NUMERIC;
-  const auto: boolean = true;
+  const autoBlocks: boolean = true;
   const textBlocksNames: boolean = false;
   // Looks bad its just for mocking and testing
-  const mockedBlocks: IBlock[] = auto ? textBlocksNames ? blocksText : blocks : blocksAutoFalse;
+  const mockedBlocks: IBlock[] = autoBlocks ? textBlocksNames ? blocksText : blocks : blocksAutoFalse;
 
   return (
     <div className="App">
@@ -27,7 +27,7 @@ const App = () => {
           showTools={showTools}
           type={type}
           folded={true}
-          auto={auto}
+          autoBlocks={autoBlocks}
           blocksOrder={EOrder.DESC}
           autoActivities={true}
         />

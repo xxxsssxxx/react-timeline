@@ -5,7 +5,7 @@ import { IActivity } from "../../interfaces/interfaces";
 import Activity from "../Activity/Activity";
 import BaseTooltip from "../Base/Tooltip/BaseTooltip";
 import BaseButton from "../Base/Button/BaseButton";
-import { sortDates, isDateObject } from "../../Utils/utils";
+import { sortDates } from "../../Utils/utils";
 
 interface INegateSides {
   [ESide.LEFT]: string;
