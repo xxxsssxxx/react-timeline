@@ -246,7 +246,7 @@ export const blocksText: IBlock[] = [
 function addDays(days: number): Date {
   const result = new Date();
   result.setDate(result.getDate() + days);
-  return result;
+  return new Date(result);
 };
 
 export const shuffle = (a: any[]): any[] => {

@@ -21,7 +21,7 @@ type Props = {
   activitiesOrder?: string;
 };
 const TimeLine: FC<Props> = ({
-  blocks = [],
+  blocks,
   showTools = true,
   folded = true,
   maxBlocks = 5,
