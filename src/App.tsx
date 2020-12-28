@@ -29,6 +29,7 @@ const App = () => {
           folded={true}
           auto={auto}
           blocksOrder={EOrder.DESC}
+          autoActivities={true}
         />
       </div>
     </div>

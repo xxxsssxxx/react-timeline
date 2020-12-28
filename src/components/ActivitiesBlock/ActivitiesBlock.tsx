@@ -1,10 +1,21 @@
-import { FC, useState, MouseEvent } from "react";
+import { FC, useState, MouseEvent, useMemo } from "react";
 import { ESide, EOrder } from "../../enums/enums";
 import { IActivity } from "../../interfaces/interfaces";
 
 import Activity from "../Activity/Activity";
 import BaseTooltip from "../Base/Tooltip/BaseTooltip";
 import BaseButton from "../Base/Button/BaseButton";
+import { sortDates, isDateObject } from "../../Utils/utils";
+
+interface INegateSides {
+  [ESide.LEFT]: string;
+  [ESide.RIGHT]: string
+};
+
+const negateSides: INegateSides = {
+  [ESide.LEFT]: ESide.RIGHT,
+  [ESide.RIGHT]: ESide.LEFT
+};
 
 type Props = {
   activities: IActivity[];
@@ -30,20 +41,30 @@ const ActivitiesBlock: FC<Props> = ({
   const [showActivities, setShowActivities] = useState(!folded);
   const [activitiesLimit, setActivitiesLimit] = useState(maxActivities);
 
-  const classes = {
-    wrapper: (
-      className: string | undefined,
-      side: string | undefined
-    ): string =>
-      `activity-wrapper mb-8 flex justify-between items-center w-full ${sideClass(
-        side
-      )} ${className || ""} cursor-default`,
-    indexes: {
-      wrapper:
-        "z-20 flex items-center order-1 bg-gray-800 mx-auto shadow-md max-w-1 h-8 rounded-full transform hover:-translate-y-1 hover:scale-110 transition duration-200 ease-linear",
-      bullet: "min-w-1 mx-auto font-semibold text-md text-white text-center"
-    }
-  };
+  const mapActivities = useMemo(() => (activities: IActivity[]): IActivity[] => {
+    let currentSide: string = ESide.RIGHT;
+    const mapped: IActivity[] = activities.sort((a, b) => {
+      if (isDateObject(a.date) && isDateObject(b.date)) {
+        return sortDates(a.date, b.date, activitiesOrder);
+      }
+      return 1;
+    }).map((activity, i) => {
+      const { date } = activity;
+      const prev: IActivity = activities[i - 1] || null;
+      if (!prev) {
+        return { ...activity, side: ESide.RIGHT };
+      }
+      if (+date !== +prev.date) {
+        currentSide = negateSides[currentSide as keyof INegateSides];
+      }
+      return { ...activity, side: currentSide };
+    });
+    return mapped;
+  }, [activitiesOrder]);
+
+  const mappedActivities: IActivity[] = autoActivities
+    ? mapActivities(activities)
+    : activities;
 
   const sideClass = (side: string = ESide.RIGHT): string => {
     return side === ESide.LEFT ? "flex-row-reverse" : "";
@@ -61,13 +82,28 @@ const ActivitiesBlock: FC<Props> = ({
     setShowActivities(!showActivities);
   };
 
+    const classes = {
+      wrapper: (
+        className: string | undefined,
+        side: string | undefined
+      ): string =>
+        `activity-wrapper mb-8 flex justify-between items-center w-full ${sideClass(
+          side
+        )} ${className || ""} cursor-default`,
+      indexes: {
+        wrapper:
+          "z-20 flex items-center order-1 bg-gray-800 mx-auto shadow-md max-w-1 h-8 rounded-full transform hover:-translate-y-1 hover:scale-110 transition duration-200 ease-linear",
+        bullet: "min-w-1 mx-auto font-semibold text-md text-white text-center"
+      }
+    };
+
   return (
     <div
       className="block-wrapper mt-20 cursor-pointer relative flex flex-col items-center"
       data-testid="activities-block"
     >
       {showActivities
-        ? activities.map((activity, i) => {
+        ? mappedActivities.map((activity, i) => {
             if (activitiesLimit && i >= activitiesLimit) return null;
             let { className, side } = activity;
             return (
