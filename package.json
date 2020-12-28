@@ -40,7 +40,7 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "test:coverage": "npm test -- --coverage --colors",
+    "test:coverage": "npm test -- --coverage --colors --no-cache",
     "eject": "react-scripts eject",
     "lint": "eslint --ext .js,.tsx,.ts --ignore-path .gitignore"
   },
@@ -88,6 +88,9 @@
       "src/*.{js,jsx,ts,tsx}",
       "!src/*.*.d*",
       "!src/index.tsx",
+      "!src/App.tsx",
+      "!src/enums/*.*",
+      "!src/interfaces/*.*",
       "!src/serviceWorkers/*",
       "!<rootDir>/node_modules/",
       "!<rootDir>/path/to/dir/"

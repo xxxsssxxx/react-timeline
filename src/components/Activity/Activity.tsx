@@ -1,8 +1,10 @@
 import React from "react";
 import BaseTag from "../Base/Tag/BaseTag";
-
-import { IActivity } from "../../interfaces/interfaces";
 import BasePerson from "../Base/Person/BasePerson";
+import BaseTitle from "../Base/Title/BaseTitle";
+
+import { dateFormating } from "../../Utils/utils";
+import { IActivity } from "../../interfaces/interfaces";
 
 type Props = {
   activity: IActivity;
@@ -22,21 +24,7 @@ const Activity: React.FC<Props> = ({ activity }) => {
   return (
     <div className={classes.wrapper} data-testid="activity">
       <div className={classes.titleWrapper}>
-        {href ? (
-          <a
-            className={classes.title}
-            href={href}
-            target="_blank"
-            rel="noreferrer"
-            title={text}
-          >
-            {text}
-          </a>
-        ) : (
-          <h3 className={classes.title} title={text}>
-            {text}
-          </h3>
-        )}
+        <BaseTitle href={href} classTitle={classes.title} text={text} />
         <div className="activity-tags flex flex-wrap">
           {tags.map((tag, i) => (
             <BaseTag tag={tag} key={i} />
@@ -47,7 +35,9 @@ const Activity: React.FC<Props> = ({ activity }) => {
         <div className="activity-assignee">
           <BasePerson person={assignee} />
         </div>
-        <span className="activity-date"> {date}</span>
+        <span className="activity-date block text-right">
+          {dateFormating(date)}
+        </span>
       </div>
     </div>
   );

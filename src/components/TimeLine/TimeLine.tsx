@@ -1,9 +1,10 @@
-import { useState, FC } from "react";
+import { useState, useMemo, FC } from "react";
 import ActivitiesBlock from "../ActivitiesBlock/ActivitiesBlock";
 import Tools from "../Tool/Tools";
 import { IActivity, IBlock } from "../../interfaces/interfaces";
 import BaseButton from "../Base/Button/BaseButton";
 import { EOrder } from "../../enums/enums";
+import { dateFormating, isDateObject, sortDates, sortString } from "../../Utils/utils";
 type Props = {
   activities?: IActivity[];
   showTools?: boolean;
@@ -15,7 +16,9 @@ type Props = {
   blocksOffset?: number;
   activitiesOffset?: number;
   auto?: boolean;
-  order?: string;
+  autoActivities?: boolean;
+  blocksOrder?: string;
+  activitiesOrder?: string;
 };
 const TimeLine: FC<Props> = ({
   blocks,
@@ -26,7 +29,9 @@ const TimeLine: FC<Props> = ({
   blocksOffset = 5,
   activitiesOffset,
   auto = false,
-  order = EOrder.DESC
+  autoActivities = false,
+  blocksOrder = EOrder.DESC,
+  activitiesOrder = EOrder.DESC
 }) => {
   const [toolsTitle] = useState("Tools to play");
   const [moreButtonText] = useState("more");
@@ -36,23 +41,29 @@ const TimeLine: FC<Props> = ({
     setBlockLimit((prevSatate) => prevSatate + blocksOffset);
   };
 
-  const mapBlocks = (blocks: IBlock[]): IBlock[] => {
-    const mapped: IBlock[] = blocks.sort((a: IBlock, b: IBlock) => {
-      if (a.date && b.date) {
-        const aDate = new Date(a.date)?.getTime();
-        const bDate = new Date(b.date)?.getTime();
-        if (order === EOrder.DESC) {
-          return bDate - aDate;
+  const mapBlocks = useMemo(
+    () => (blocks: IBlock[]): IBlock[] => {
+      const mapped: IBlock[] = blocks.sort((a: IBlock, b: IBlock) => {
+        if (isDateObject(a.blockText) && isDateObject(b.blockText)) {
+          return sortDates(a.blockText, b.blockText, blocksOrder);
         }
-        return aDate - bDate;
-      }
-      if (order === EOrder.DESC) {
-        return b.blockText.localeCompare(a.blockText);
-      }
-      return a.blockText.localeCompare(b.blockText);
-    });
-    return mapped;
-  };
+
+        if (typeof a.blockText === "string" && typeof b.blockText === "string") {
+          return sortString(a.blockText, b.blockText, blocksOrder);
+        }
+
+        return 1;
+      }).map((block) => {
+        const { blockText } = block;
+        if (isDateObject(blockText)) {
+          return { ...block, blockText: dateFormating(blockText, false) };
+        }
+        return block;
+      });
+      return mapped;
+    },
+    [blocksOrder]
+  );
 
   const mappedBlocks: IBlock[] = auto ? mapBlocks(blocks) : blocks;
 
@@ -76,6 +87,8 @@ const TimeLine: FC<Props> = ({
               folded={!!folded}
               maxActivities={max || maxActivities}
               activitiesOffset={offset || activitiesOffset}
+              activitiesOrder={activitiesOrder}
+              autoActivities={autoActivities}
               key={i}
             />
           );
