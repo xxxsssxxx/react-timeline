@@ -1,5 +1,5 @@
 import { IActivity, IBlock } from "../interfaces/interfaces";
-import { ESide, EPriority } from "../enums/enums";
+import { ESide, EPriority, EOrder } from "../enums/enums";
 import { Schemes } from "../schemes/schemes";
 import { dateFormating } from "../Utils/utils";
 
@@ -17,7 +17,7 @@ export const activities: IActivity[] = [
   {
     text: "Went for a walk",
     href: "https://google.com",
-    date: new Date(),
+    date: addMinutes(new Date(), 30),
     tags: [
       {
         name: "Work",
@@ -239,7 +239,7 @@ export const blocksAutoFalse: IBlock[] = [
 ];
 
 export const blocksText: IBlock[] = [
-  { blockText: new Date().toLocaleString("default", { month: "long" }), activities },
+  { blockText: new Date().toLocaleString("default", { month: "long" }), activities, order: EOrder.ASC },
   { blockText: addDays(4).toLocaleString("default", { month: "long" }), activities },
   { blockText: addDays(10).toLocaleString("default", { month: "long" }), activities },
   { blockText: addDays(25).toLocaleString("default", { month: "long" }), activities },

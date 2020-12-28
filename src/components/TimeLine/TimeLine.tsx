@@ -80,6 +80,7 @@ const TimeLine: FC<Props> = ({
         ></div>
         {mappedBlocks.map(({ activities, blockText, max, offset, order, auto }, i) => {
           if (i >= blockLimit) return null;
+          const autoActivitiesAcc = auto === undefined ? autoActivities : auto;
           return (
             <ActivitiesBlock
               activities={activities}
@@ -88,7 +89,7 @@ const TimeLine: FC<Props> = ({
               maxActivities={max || maxActivities}
               activitiesOffset={offset || activitiesOffset}
               activitiesOrder={order || activitiesOrder}
-              autoActivities={auto || autoActivities}
+              autoActivities={autoActivitiesAcc}
               key={i}
             />
           );

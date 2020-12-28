@@ -228,5 +228,58 @@ describe("TimeLine", () => {
         });
       });
     });
+
+      describe("Auto Activities", () => {
+        test("Prioritized auto for each block to autoActivities on whole timelime", async() => {
+          blocksText[0].auto = false;
+          const blocks = JSON.parse(JSON.stringify(blocksText));
+          render(
+            <TimeLine
+              blocks={blocks}
+              autoBlocks={false}
+              maxBlocks={mockBlocks.length}
+              autoActivities={true}
+            />
+          );
+          const bullets = await screen.findAllByTestId("bullet");
+          fireEvent.click(bullets[0]);
+
+          const nonMappedActivities = await screen.findAllByTestId("activity-wrapper");
+          nonMappedActivities.forEach((activity, i) => {
+            const { text } = mockBlocks[0].activities[i];
+            expect(activity.textContent?.includes(text)).toBe(true);
+          });
+          fireEvent.click(bullets[0]);
+
+          fireEvent.click(bullets[1]);
+          const mappedActivities = await screen.findAllByTestId("activity-wrapper");
+          const onALeft = mappedActivities[0].className.includes("flex-row-reverse");
+          const onALeft2 = mappedActivities[1].className.includes("flex-row-reverse");
+          const onALeft3 = mappedActivities[2].className.includes("flex-row-reverse");
+          expect(onALeft).toBe(false);
+          expect(onALeft2).toBe(true);
+          expect(onALeft3).toBe(false);
+        });
+        test("Prioritized order for each block to activitiesOrder on whole timelime", async() => {
+          blocksText[0].order = EOrder.ASC;
+          const blocks = JSON.parse(JSON.stringify(blocksText));
+          render(
+            <TimeLine
+              blocks={blocks}
+              autoBlocks={false}
+              maxBlocks={blocksText.length}
+              autoActivities={true}
+            />
+          );
+          const bullets = await screen.findAllByTestId("bullet");
+          fireEvent.click(bullets[0]);
+
+          const ascActivities = await screen.findAllByTestId("activity-wrapper");
+          ascActivities.forEach((activity, i) => {
+            const { text } = blocksText[0].activities[i];
+            expect(activity.textContent?.includes(text)).toBe(true);
+          });
+        });
+      });
   });
 });
