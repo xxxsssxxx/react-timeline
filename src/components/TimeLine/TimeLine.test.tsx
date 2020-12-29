@@ -4,7 +4,7 @@ import TimeLine from "./TimeLine";
 import { blocks, blocksText, shuffle } from "../../mocks/mocks";
 import { dateFormating } from "../../Utils/utils";
 import { IBlock } from "../../interfaces/interfaces";
-import { EOrder } from "../../enums/enums";
+import { EBulletType, EOrder } from "../../enums/enums";
 
 describe("TimeLine", () => {
   let mockBlocks: IBlock[];
@@ -281,5 +281,67 @@ describe("TimeLine", () => {
           });
         });
       });
+  });
+
+  describe("Bullet types", () => {
+    describe("Block", () => {
+      test("Render numeric block type", async() => {
+        render(
+          <TimeLine blocks={blocksText} maxBlocks={blocksText.length} blockBulletsType={EBulletType.NUMERIC}/>
+        );
+        const bullets = await screen.findAllByTestId("bullet");
+        bullets.forEach((block, i) => {
+          expect(block.textContent).toEqual(`${i + 1}`);
+        });
+      });
+      test("Render time block type", async() => {
+        render(
+          <TimeLine
+            blocks={blocksText}
+            maxBlocks={blocksText.length}
+            blockBulletsType={EBulletType.TIMING}
+          />
+        );
+        const bullets = await screen.findAllByTestId("bullet");
+        bullets.forEach((block, i) => {
+          expect(block.textContent).toEqual(blocksText[i].blockText);
+        });
+      });
+    });
+
+    describe("Activities", () => {
+      test("Render numeric type", async() => {
+        render(
+          <TimeLine
+            blocks={blocksText}
+            maxBlocks={blocksText.length}
+            activitiesBulletsType={EBulletType.NUMERIC}
+          />
+        );
+        const bullets = await screen.findAllByTestId("bullet");
+        fireEvent.click(bullets[0]);
+
+        const activities = await screen.findAllByTestId("activity-wrapper");
+        activities.forEach((activity, i) => {
+          expect(activity.textContent?.includes(`${i + 1}`)).toBe(true);
+        });
+      });
+      test("Render time type", async() => {
+        render(
+          <TimeLine
+            blocks={blocksText}
+            maxBlocks={blocksText.length}
+            blockBulletsType={EBulletType.TIMING}
+          />
+        );
+        const bullets = await screen.findAllByTestId("bullet");
+        fireEvent.click(bullets[0]);
+
+        const activities = await screen.findAllByTestId("activity-wrapper");
+        activities.forEach((activity, i) => {
+          expect(activity.textContent?.includes(blocksText[0].activities[i].text)).toBe(true);
+        });
+      });
+    });
   });
 });

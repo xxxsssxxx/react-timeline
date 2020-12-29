@@ -12,7 +12,7 @@ const App = () => {
   let showTools: boolean = true;
   let type: string = EType.NUMERIC;
   const autoBlocks: boolean = true;
-  const textBlocksNames: boolean = false;
+  const textBlocksNames: boolean = true;
   // Looks bad its just for mocking and testing
   const mockedBlocks: IBlock[] = autoBlocks ? textBlocksNames ? blocksText : blocks : blocksAutoFalse;
 
