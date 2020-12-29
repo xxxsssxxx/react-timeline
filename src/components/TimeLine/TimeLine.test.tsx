@@ -229,58 +229,144 @@ describe("TimeLine", () => {
       });
     });
 
-      describe("Auto Activities", () => {
-        test("Prioritized auto for each block to autoActivities on whole timelime", async() => {
-          blocksText[0].auto = false;
-          const blocks = JSON.parse(JSON.stringify(blocksText));
-          render(
-            <TimeLine
-              blocks={blocks}
-              autoBlocks={false}
-              maxBlocks={mockBlocks.length}
-              autoActivities={true}
-            />
-          );
-          const bullets = await screen.findAllByTestId("bullet");
-          fireEvent.click(bullets[0]);
+    describe("Auto Activities", () => {
+      test("Prioritized auto for each block to autoActivities on whole timelime", async() => {
+        blocksText[0].auto = false;
+        const blocks = JSON.parse(JSON.stringify(blocksText));
+        render(
+          <TimeLine
+            blocks={blocks}
+            autoBlocks={false}
+            maxBlocks={mockBlocks.length}
+            autoActivities={true}
+          />
+        );
+        const bullets = await screen.findAllByTestId("bullet");
+        fireEvent.click(bullets[0]);
 
-          const nonMappedActivities = await screen.findAllByTestId("activity-wrapper");
-          nonMappedActivities.forEach((activity, i) => {
-            const { text } = mockBlocks[0].activities[i];
-            expect(activity.textContent?.includes(text)).toBe(true);
-          });
-          fireEvent.click(bullets[0]);
-
-          fireEvent.click(bullets[1]);
-          const mappedActivities = await screen.findAllByTestId("activity-wrapper");
-          const onALeft = mappedActivities[0].className.includes("flex-row-reverse");
-          const onALeft2 = mappedActivities[1].className.includes("flex-row-reverse");
-          const onALeft3 = mappedActivities[2].className.includes("flex-row-reverse");
-          expect(onALeft).toBe(false);
-          expect(onALeft2).toBe(true);
-          expect(onALeft3).toBe(false);
+        const nonMappedActivities = await screen.findAllByTestId("activity-wrapper");
+        nonMappedActivities.forEach((activity, i) => {
+          const { text } = mockBlocks[0].activities[i];
+          expect(activity.textContent?.includes(text)).toBe(true);
         });
-        test("Prioritized order for each block to activitiesOrder on whole timelime", async() => {
-          blocksText[0].order = EOrder.ASC;
-          const blocks = JSON.parse(JSON.stringify(blocksText));
-          render(
-            <TimeLine
-              blocks={blocks}
-              autoBlocks={false}
-              maxBlocks={blocksText.length}
-              autoActivities={true}
-            />
-          );
-          const bullets = await screen.findAllByTestId("bullet");
-          fireEvent.click(bullets[0]);
+        fireEvent.click(bullets[0]);
 
-          const ascActivities = await screen.findAllByTestId("activity-wrapper");
-          ascActivities.forEach((activity, i) => {
-            const { text } = blocksText[0].activities[i];
-            expect(activity.textContent?.includes(text)).toBe(true);
-          });
+        fireEvent.click(bullets[1]);
+        const mappedActivities = await screen.findAllByTestId("activity-wrapper");
+        const onALeft = mappedActivities[0].className.includes("flex-row-reverse");
+        const onALeft2 = mappedActivities[1].className.includes("flex-row-reverse");
+        const onALeft3 = mappedActivities[2].className.includes("flex-row-reverse");
+        expect(onALeft).toBe(false);
+        expect(onALeft2).toBe(true);
+        expect(onALeft3).toBe(false);
+      });
+      test("Prioritized order for each block to activitiesOrder on whole timelime", async() => {
+        blocksText[0].order = EOrder.ASC;
+        const blocks = JSON.parse(JSON.stringify(blocksText));
+        render(
+          <TimeLine
+            blocks={blocks}
+            autoBlocks={false}
+            maxBlocks={blocksText.length}
+            autoActivities={true}
+          />
+        );
+        const bullets = await screen.findAllByTestId("bullet");
+        fireEvent.click(bullets[0]);
+
+        const ascActivities = await screen.findAllByTestId("activity-wrapper");
+        ascActivities.forEach((activity, i) => {
+          const { text } = blocksText[0].activities[i];
+          expect(activity.textContent?.includes(text)).toBe(true);
         });
       });
+    });
+
+    describe("Show load more count", () => {
+      test("blocks if auto is true and blockLoadCount is true", async() => {
+        const max = 3;
+        render(
+          <TimeLine
+            blocks={blocksText}
+            maxBlocks={max}
+            autoBlocks={true}
+            blockLoadCount={true}
+          />
+        );
+        const loadMore = await screen.findByTestId("load-more-blocks");
+        const loadCount = `${blocksText.length - max}`;
+        expect(loadMore.textContent?.includes(loadCount)).toBe(true);
+      });
+      test("blocks if auto is false but send as a parametr", async() => {
+        const max = 3;
+        const blocksLoadCount = `${blocksText.length - max}`;
+        render(
+          <TimeLine
+            blocks={blocksText}
+            maxBlocks={max}
+            autoBlocks={false}
+            blockLoadCount={blocksLoadCount}
+          />
+        );
+        const loadMore = await screen.findByTestId("load-more-blocks");
+        expect(loadMore.textContent?.includes(blocksLoadCount)).toBe(true);
+      });
+
+      test("after clicked loadMore and still not all loaded", async() => {
+        const max = 3;
+        const offset = 3;
+        const count = `${blocksText.length - max - offset}`;
+        render(
+          <TimeLine
+            blocks={blocksText}
+            folded={true}
+            autoBlocks={true}
+            blocksOrder={EOrder.DESC}
+            autoActivities={true}
+            maxActivities={max}
+            maxBlocks={max}
+            blocksOffset={offset}
+            blockLoadCount={true}
+            activitiesLoadCount={true}
+          />
+        );
+        let loadMore = await screen.findByTestId("load-more-blocks");
+        loadMore.firstChild && fireEvent.click(loadMore.firstChild);
+
+        loadMore = await screen.findByTestId("load-more-blocks");
+        expect(loadMore.textContent?.includes(count)).toBe(true);
+      });
+    });
+    describe("Doesnt show load more count", () => {
+      test("blocks if auto is false and blocksLoadCount is empty", async() => {
+        const max = 3;
+        render(
+          <TimeLine
+            blocks={blocksText}
+            maxBlocks={max}
+            autoBlocks={false}
+            blockLoadCount={false}
+          />
+        );
+        const loadMore = await screen.findByTestId("load-more-blocks");
+        const loadCount = `${blocksText.length - max}`;
+        expect(loadMore.textContent?.includes(loadCount)).toBe(false);
+      });
+      test("blocks if blocksLoad is false", async() => {
+        const max = 3;
+        render(
+          <TimeLine
+            blocks={blocksText}
+            maxBlocks={max}
+            autoBlocks={true}
+            blockLoadCount={false}
+          />
+        );
+        const loadMore = await screen.findByTestId("load-more-blocks");
+        const loadCount = `${blocksText.length - max}`;
+        expect(loadMore.textContent?.includes(loadCount)).toBe(false);
+      });
+    });
   });
 
   describe("Bullet types", () => {

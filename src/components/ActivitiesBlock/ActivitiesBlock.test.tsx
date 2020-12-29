@@ -163,6 +163,98 @@ describe("Activity", () => {
       activities = await screen.findAllByTestId("activity-wrapper");
       expect(activities).toHaveLength(defaultOffset + defaultMax);
     });
+
+    test("Show not loaded count if auto is true", async() => {
+      const max = 3;
+      render(
+        <ActivitiesBlock
+          activities={mockActivities}
+          blockText={blocksAutoFalse[0].blockText}
+          folded={false}
+          maxActivities={max}
+          activitiesLoadCount={true}
+          autoActivities={true}
+        />
+      );
+      const loadMore = await screen.findAllByTestId("load-more-activities");
+      const loadCount = `${mockActivities.length - max}`;
+      expect(loadMore[0].textContent?.includes(loadCount)).toBe(true);
+    });
+
+    test("Show not loaded count if auto is false but loadCount is send by parametr", async() => {
+      const max = 3;
+      const count = `${mockActivities.length - max}`;
+      const activities = JSON.parse(JSON.stringify(mockActivities));
+      activities[0].loadCount = count;
+      render(
+        <ActivitiesBlock
+          activities={mockActivities}
+          blockText={blocksAutoFalse[0].blockText}
+          folded={false}
+          maxActivities={max}
+          activitiesLoadCount={true}
+          autoActivities={true}
+        />
+      );
+      const loadMore = await screen.findAllByTestId("load-more-activities");
+      expect(loadMore[0].textContent?.includes(count)).toBe(true);
+    });
+
+    test("Show loadMore after click and still some are not loaded", async() => {
+      const max = 3;
+      const offset = 3;
+      render(
+        <ActivitiesBlock
+          activities={mockActivities}
+          blockText={blocksAutoFalse[0].blockText}
+          folded={false}
+          maxActivities={max}
+          activitiesLoadCount={true}
+          autoActivities={true}
+          activitiesOffset={offset}
+        />
+      );
+
+      const loadMore = await screen.findByTestId("load-more-activities");
+      loadMore.firstChild && fireEvent.click(loadMore.firstChild);
+
+      const loadCount = `${mockActivities.length - max - offset}`;
+      expect(loadMore.textContent?.includes(loadCount)).toBe(true);
+    });
+
+    test("Doesnt show not loaded count auto is false", async() => {
+      const max = 3;
+      render(
+        <ActivitiesBlock
+          activities={mockActivities}
+          blockText={blocksAutoFalse[0].blockText}
+          folded={false}
+          maxActivities={max}
+          activitiesLoadCount={true}
+          autoActivities={false}
+        />
+      );
+      const loadMore = await screen.findAllByTestId("load-more-activities");
+      const loadCount = `${mockActivities.length - max}`;
+      expect(loadMore[0].textContent?.includes(loadCount)).toBe(false);
+    });
+
+    test("Doesnt show not loaded count auto is true and activitiesLoadCount is false", async() => {
+      const max = 3;
+      render(
+        <ActivitiesBlock
+          activities={mockActivities}
+          blockText={blocksAutoFalse[0].blockText}
+          folded={false}
+          maxActivities={max}
+          activitiesLoadCount={false}
+          autoActivities={true}
+        />
+      );
+      const loadMore = await screen.findAllByTestId("load-more-activities");
+      const loadCount = `${mockActivities.length - max}`;
+      expect(loadMore[0].textContent?.includes(loadCount)).toBe(false);
+    });
   });
 
   describe("Auto arrange", () => {

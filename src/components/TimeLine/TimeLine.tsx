@@ -1,4 +1,4 @@
-import { useState, useMemo, FC } from "react";
+import { useState, useMemo, useEffect, FC } from "react";
 import ActivitiesBlock from "../ActivitiesBlock/ActivitiesBlock";
 import Tools from "../Tool/Tools";
 import { IActivity, IBlock } from "../../interfaces/interfaces";
@@ -21,6 +21,8 @@ type Props = {
   activitiesOrder?: string;
   activitiesBulletsType?: string;
   blockBulletsType?: string;
+  blockLoadCount?: string | boolean;
+  activitiesLoadCount?: boolean;
 };
 const TimeLine: FC<Props> = ({
   blocks,
@@ -30,6 +32,8 @@ const TimeLine: FC<Props> = ({
   maxActivities,
   blocksOffset = 5,
   activitiesOffset,
+  blockLoadCount = "",
+  activitiesLoadCount = false,
   autoBlocks = false,
   autoActivities = false,
   blocksOrder = EOrder.DESC,
@@ -37,13 +41,11 @@ const TimeLine: FC<Props> = ({
   blockBulletsType = EBulletType.TIMING,
   activitiesBulletsType = EBulletType.NUMERIC
 }) => {
+  const [mappedBlocks, setMappedBlocks] = useState(blocks);
+  const [loadCount, setLoadCount] = useState(blockLoadCount);
   const [toolsTitle] = useState("Tools to play");
-  const [moreButtonText] = useState("more");
+  const [moreButtonText, setMoreButtonText] = useState("more");
   const [blockLimit, setBlockLimit] = useState(maxBlocks);
-
-  const loadMoreBlocks = () => {
-    setBlockLimit((prevSatate) => prevSatate + blocksOffset);
-  };
 
   const mapBlocks = useMemo(
     () => (blocks: IBlock[]): IBlock[] => {
@@ -74,7 +76,28 @@ const TimeLine: FC<Props> = ({
     [blocksOrder]
   );
 
-  const mappedBlocks: IBlock[] = autoBlocks ? mapBlocks(blocks) : blocks;
+  const loadMoreBlocks = () => {
+    setBlockLimit((prevSatate) => prevSatate + blocksOffset);
+    if (loadCount && !isNaN(+loadCount)) {
+      const count = `${+loadCount - blocksOffset}`;
+      setLoadCount(count);
+      setMoreButtonText(`more (${count})`);
+    }
+  };
+
+  useEffect(() => {
+    if (autoBlocks) {
+      setMappedBlocks(mapBlocks(blocks));
+    }
+    if (blockLimit < blocks.length) {
+      if (!!blockLoadCount) {
+        const count = `${blocks.length - blockLimit}`;
+        setLoadCount(count);
+        setMoreButtonText(`more (${count})`);
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div
@@ -88,7 +111,7 @@ const TimeLine: FC<Props> = ({
           style={{ left: "50%" }}
         ></div>
         {mappedBlocks.map(
-          ({ activities, blockText, max, offset, order, auto, bullets }, i) => {
+          ({ activities, blockText, max, offset, order, auto, bullets, loadsCount }, i) => {
             if (i >= blockLimit) return null;
             const autoActivitiesAcc =
               auto === undefined ? autoActivities : auto;
@@ -100,6 +123,7 @@ const TimeLine: FC<Props> = ({
                 maxActivities={max || maxActivities}
                 activitiesOffset={offset || activitiesOffset}
                 activitiesOrder={order || activitiesOrder}
+                activitiesLoadCount={loadsCount || activitiesLoadCount}
                 autoActivities={autoActivitiesAcc}
                 key={i}
                 index={i}

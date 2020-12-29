@@ -6,7 +6,8 @@ export interface IBlock {
   offset?: number;
   order?: string;
   auto?: boolean;
-  bullets?: string
+  bullets?: string;
+  loadsCount?: string;
 }
 
 export interface IActivity {

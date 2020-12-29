@@ -1,4 +1,4 @@
-import { FC, useState, MouseEvent, useMemo } from "react";
+import { FC, useState, MouseEvent, useMemo, useEffect } from "react";
 import { ESide, EOrder, EBulletType } from "../../enums/enums";
 import { IActivity } from "../../interfaces/interfaces";
 
@@ -28,6 +28,7 @@ type Props = {
   autoActivities?: boolean;
   bulletsType?: string;
   blockBulletsType?: string;
+  activitiesLoadCount?: string | boolean;
 };
 
 const ActivitiesBlock: FC<Props> = ({
@@ -39,12 +40,16 @@ const ActivitiesBlock: FC<Props> = ({
   activitiesOffset = 5,
   activitiesOrder = EOrder.DESC,
   autoActivities = false,
+  activitiesLoadCount = "",
   bulletsType = EBulletType.NUMERIC,
   blockBulletsType = EBulletType.NUMERIC
 }) => {
+  const [mappedActivities, setMappedActivities] = useState(activities);
   const [showCount, setShowCount] = useState(false);
+  const [loadCount, setLoadCount] = useState(activitiesLoadCount);
   const [showActivities, setShowActivities] = useState(!folded);
   const [activitiesLimit, setActivitiesLimit] = useState(maxActivities);
+  const [moreButtonText, setMoreButtonText] = useState("more");
 
   const mapActivities = useMemo(
     () => (activities: IActivity[]): IActivity[] => {
@@ -69,10 +74,6 @@ const ActivitiesBlock: FC<Props> = ({
     [activitiesOrder]
   );
 
-  const mappedActivities: IActivity[] = autoActivities
-    ? mapActivities(activities)
-    : activities;
-
   const sideClass = (side: string = ESide.RIGHT): string => {
     return side === ESide.LEFT ? "flex-row-reverse" : "";
   };
@@ -83,11 +84,28 @@ const ActivitiesBlock: FC<Props> = ({
 
   const loadMoreActivities = () => {
     setActivitiesLimit((prevSatate) => prevSatate + activitiesOffset);
+    if (loadCount && !isNaN(+loadCount)) {
+      const count = `${+loadCount - activitiesOffset}`;
+      setLoadCount(count);
+      setMoreButtonText(`more (${count})`);
+    }
   };
 
   const toggleActivities = (): void => {
     setShowActivities(!showActivities);
   };
+
+  useEffect(() => {
+    if (autoActivities) {
+      if (!!activitiesLoadCount && activitiesLimit < activities.length) {
+        const count = `${activities.length - activitiesLimit}`;
+        setLoadCount(count);
+        setMoreButtonText(`more (${count})`);
+      }
+      setMappedActivities(mapActivities(activities));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const classes = {
     wrapper: (
@@ -147,7 +165,7 @@ const ActivitiesBlock: FC<Props> = ({
         >
           <BaseButton
             type={"primary"}
-            text={"More"}
+            text={moreButtonText}
             click={loadMoreActivities}
           />
         </div>

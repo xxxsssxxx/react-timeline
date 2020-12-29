@@ -30,6 +30,11 @@ const App = () => {
           autoBlocks={autoBlocks}
           blocksOrder={EOrder.DESC}
           autoActivities={true}
+          maxActivities={3}
+          maxBlocks={3}
+          blocksOffset={3}
+          blockLoadCount={true}
+          activitiesLoadCount={true}
         />
       </div>
     </div>
