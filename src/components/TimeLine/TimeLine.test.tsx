@@ -283,7 +283,7 @@ describe("TimeLine", () => {
     });
 
     describe("Show load more count", () => {
-      test("blocks", async() => {
+      test("blocks if auto is true and blockLoadCount is true", async() => {
         const max = 3;
         render(
           <TimeLine
@@ -296,24 +296,6 @@ describe("TimeLine", () => {
         const loadMore = await screen.findByTestId("load-more-blocks");
         const loadCount = `${blocksText.length - max}`;
         expect(loadMore.textContent?.includes(loadCount)).toBe(true);
-      });
-      test("activities", async() => {
-        const max = 3;
-        render(
-          <TimeLine
-            blocks={blocksText}
-            maxBlocks={blocksText.length}
-            folded={false}
-            autoBlocks={true}
-            blocksOrder={EOrder.DESC}
-            autoActivities={true}
-            maxActivities={3}
-            activitiesLoadCount={true}
-          />
-        );
-        const loadMore = await screen.findAllByTestId("load-more-activities");
-        const loadCount = `${blocksText[0].activities.length - max}`;
-        expect(loadMore[0].textContent?.includes(loadCount)).toBe(true);
       });
       test("blocks if auto is false but send as a parametr", async() => {
         const max = 3;
@@ -329,25 +311,30 @@ describe("TimeLine", () => {
         const loadMore = await screen.findByTestId("load-more-blocks");
         expect(loadMore.textContent?.includes(blocksLoadCount)).toBe(true);
       });
-      test("if autoActivities is false but count send as a parametr", async() => {
+
+      test("after clicked loadMore and still not all loaded", async() => {
         const max = 3;
-        const count = `${blocksText[0].activities.length - max}`;
-        const blocks = JSON.parse(JSON.stringify(blocksText));
-        blocks[0].loadsCount = count;
+        const offset = 3;
+        const count = `${blocksText.length - max - offset}`;
         render(
           <TimeLine
             blocks={blocksText}
-            maxBlocks={blocksText.length}
-            folded={false}
+            folded={true}
             autoBlocks={true}
             blocksOrder={EOrder.DESC}
             autoActivities={true}
-            maxActivities={3}
+            maxActivities={max}
+            maxBlocks={max}
+            blocksOffset={offset}
+            blockLoadCount={true}
             activitiesLoadCount={true}
           />
         );
-        const loadMore = await screen.findAllByTestId("load-more-activities");
-        expect(loadMore[0].textContent?.includes(count)).toBe(true);
+        let loadMore = await screen.findByTestId("load-more-blocks");
+        loadMore.firstChild && fireEvent.click(loadMore.firstChild);
+
+        loadMore = await screen.findByTestId("load-more-blocks");
+        expect(loadMore.textContent?.includes(count)).toBe(true);
       });
     });
     describe("Doesnt show load more count", () => {
@@ -365,24 +352,6 @@ describe("TimeLine", () => {
         const loadCount = `${blocksText.length - max}`;
         expect(loadMore.textContent?.includes(loadCount)).toBe(false);
       });
-      test("activities if auto is false and activitiesLoadCount is epmty", async() => {
-        const max = 3;
-        render(
-          <TimeLine
-            blocks={blocksText}
-            maxBlocks={blocksText.length}
-            folded={false}
-            autoBlocks={true}
-            blocksOrder={EOrder.DESC}
-            autoActivities={false}
-            activitiesLoadCount={false}
-            maxActivities={3}
-          />
-        );
-        const loadMore = await screen.findAllByTestId("load-more-activities");
-        const loadCount = `${blocksText[0].activities.length - max}`;
-        expect(loadMore[0].textContent?.includes(loadCount)).toBe(false);
-      });
       test("blocks if blocksLoad is false", async() => {
         const max = 3;
         render(
@@ -396,24 +365,6 @@ describe("TimeLine", () => {
         const loadMore = await screen.findByTestId("load-more-blocks");
         const loadCount = `${blocksText.length - max}`;
         expect(loadMore.textContent?.includes(loadCount)).toBe(false);
-      });
-      test("activities if activitiesLoad is false", async() => {
-        const max = 3;
-        render(
-          <TimeLine
-            blocks={blocksText}
-            maxBlocks={blocksText.length}
-            folded={false}
-            autoBlocks={true}
-            blocksOrder={EOrder.DESC}
-            autoActivities={true}
-            maxActivities={3}
-            activitiesLoadCount={false}
-          />
-        );
-        const loadMore = await screen.findAllByTestId("load-more-activities");
-        const loadCount = `${blocksText[0].activities.length - max}`;
-        expect(loadMore[0].textContent?.includes(loadCount)).toBe(false);
       });
     });
   });

@@ -26,11 +26,14 @@ const App = () => {
           blocks={shuffle(mockedBlocks)}
           showTools={showTools}
           type={type}
-          folded={false}
+          folded={true}
           autoBlocks={autoBlocks}
           blocksOrder={EOrder.DESC}
           autoActivities={true}
           maxActivities={3}
+          maxBlocks={3}
+          blocksOffset={3}
+          blockLoadCount={true}
           activitiesLoadCount={true}
         />
       </div>
