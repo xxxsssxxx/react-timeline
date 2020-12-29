@@ -3,7 +3,7 @@ import ActivitiesBlock from "../ActivitiesBlock/ActivitiesBlock";
 import Tools from "../Tool/Tools";
 import { IActivity, IBlock } from "../../interfaces/interfaces";
 import BaseButton from "../Base/Button/BaseButton";
-import { EOrder } from "../../enums/enums";
+import { EOrder, EBulletType } from "../../enums/enums";
 import { dateFormating, isDateObject, sortDates, sortString } from "../../Utils/utils";
 type Props = {
   activities?: IActivity[];
@@ -19,6 +19,8 @@ type Props = {
   autoActivities?: boolean;
   blocksOrder?: string;
   activitiesOrder?: string;
+  activitiesBulletsType?: string;
+  blockBulletsType?: string;
 };
 const TimeLine: FC<Props> = ({
   blocks,
@@ -31,7 +33,9 @@ const TimeLine: FC<Props> = ({
   autoBlocks = false,
   autoActivities = false,
   blocksOrder = EOrder.DESC,
-  activitiesOrder = EOrder.DESC
+  activitiesOrder = EOrder.DESC,
+  blockBulletsType = EBulletType.TIMING,
+  activitiesBulletsType = EBulletType.NUMERIC
 }) => {
   const [toolsTitle] = useState("Tools to play");
   const [moreButtonText] = useState("more");
@@ -43,23 +47,28 @@ const TimeLine: FC<Props> = ({
 
   const mapBlocks = useMemo(
     () => (blocks: IBlock[]): IBlock[] => {
-      const mapped: IBlock[] = blocks.sort((a: IBlock, b: IBlock) => {
-        if (isDateObject(a.blockText) && isDateObject(b.blockText)) {
-          return sortDates(a.blockText, b.blockText, blocksOrder);
-        }
+      const mapped: IBlock[] = blocks
+        .sort((a: IBlock, b: IBlock) => {
+          if (isDateObject(a.blockText) && isDateObject(b.blockText)) {
+            return sortDates(a.blockText, b.blockText, blocksOrder);
+          }
 
-        if (typeof a.blockText === "string" && typeof b.blockText === "string") {
-          return sortString(a.blockText, b.blockText, blocksOrder);
-        }
+          if (
+            typeof a.blockText === "string" &&
+            typeof b.blockText === "string"
+          ) {
+            return sortString(a.blockText, b.blockText, blocksOrder);
+          }
 
-        return 1;
-      }).map((block) => {
-        const { blockText } = block;
-        if (isDateObject(blockText)) {
-          return { ...block, blockText: dateFormating(blockText, false) };
-        }
-        return block;
-      });
+          return 1;
+        })
+        .map((block) => {
+          const { blockText } = block;
+          if (isDateObject(blockText)) {
+            return { ...block, blockText: dateFormating(blockText, false) };
+          }
+          return block;
+        });
       return mapped;
     },
     [blocksOrder]
@@ -78,22 +87,28 @@ const TimeLine: FC<Props> = ({
           className="border-2-2 absolute border-opacity-20 border-gray-700 h-full border"
           style={{ left: "50%" }}
         ></div>
-        {mappedBlocks.map(({ activities, blockText, max, offset, order, auto }, i) => {
-          if (i >= blockLimit) return null;
-          const autoActivitiesAcc = auto === undefined ? autoActivities : auto;
-          return (
-            <ActivitiesBlock
-              activities={activities}
-              blockText={blockText}
-              folded={!!folded}
-              maxActivities={max || maxActivities}
-              activitiesOffset={offset || activitiesOffset}
-              activitiesOrder={order || activitiesOrder}
-              autoActivities={autoActivitiesAcc}
-              key={i}
-            />
-          );
-        })}
+        {mappedBlocks.map(
+          ({ activities, blockText, max, offset, order, auto, bullets }, i) => {
+            if (i >= blockLimit) return null;
+            const autoActivitiesAcc =
+              auto === undefined ? autoActivities : auto;
+            return (
+              <ActivitiesBlock
+                activities={activities}
+                blockText={blockText}
+                folded={!!folded}
+                maxActivities={max || maxActivities}
+                activitiesOffset={offset || activitiesOffset}
+                activitiesOrder={order || activitiesOrder}
+                autoActivities={autoActivitiesAcc}
+                key={i}
+                index={i}
+                blockBulletsType={blockBulletsType}
+                bulletsType={bullets || activitiesBulletsType}
+              />
+            );
+          }
+        )}
       </div>
       {blocks.length > blockLimit ? (
         <div className="button-wrapper mx-auto" data-testid="load-more-blocks">

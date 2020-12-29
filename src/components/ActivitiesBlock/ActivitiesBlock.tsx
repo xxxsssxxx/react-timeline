@@ -1,11 +1,11 @@
 import { FC, useState, MouseEvent, useMemo } from "react";
-import { ESide, EOrder } from "../../enums/enums";
+import { ESide, EOrder, EBulletType } from "../../enums/enums";
 import { IActivity } from "../../interfaces/interfaces";
 
 import Activity from "../Activity/Activity";
 import BaseTooltip from "../Base/Tooltip/BaseTooltip";
 import BaseButton from "../Base/Button/BaseButton";
-import { sortDates } from "../../Utils/utils";
+import { dateFormating, sortDates } from "../../Utils/utils";
 
 interface INegateSides {
   [ESide.LEFT]: string;
@@ -25,39 +25,49 @@ type Props = {
   maxActivities?: number;
   activitiesOffset?: number;
   activitiesOrder?: string;
-  autoActivities?: boolean
+  autoActivities?: boolean;
+  bulletsType?: string;
+  blockBulletsType?: string;
 };
 
 const ActivitiesBlock: FC<Props> = ({
+  index = 0,
   activities,
   blockText,
   folded,
   maxActivities = 5,
   activitiesOffset = 5,
   activitiesOrder = EOrder.DESC,
-  autoActivities = false
+  autoActivities = false,
+  bulletsType = EBulletType.NUMERIC,
+  blockBulletsType = EBulletType.NUMERIC
 }) => {
   const [showCount, setShowCount] = useState(false);
   const [showActivities, setShowActivities] = useState(!folded);
   const [activitiesLimit, setActivitiesLimit] = useState(maxActivities);
 
-  const mapActivities = useMemo(() => (activities: IActivity[]): IActivity[] => {
-    let currentSide: string = ESide.RIGHT;
-    const mapped: IActivity[] = activities.sort((a, b) => {
-      return sortDates(a.date, b.date, activitiesOrder);
-    }).map((activity, i) => {
-      const { date } = activity;
-      const prev: IActivity = activities[i - 1] || null;
-      if (!prev) {
-        return { ...activity, side: ESide.RIGHT };
-      }
-      if (+date !== +prev.date) {
-        currentSide = negateSides[currentSide as keyof INegateSides];
-      }
-      return { ...activity, side: currentSide };
-    });
-    return mapped;
-  }, [activitiesOrder]);
+  const mapActivities = useMemo(
+    () => (activities: IActivity[]): IActivity[] => {
+      let currentSide: string = ESide.RIGHT;
+      const mapped: IActivity[] = activities
+        .sort((a, b) => {
+          return sortDates(a.date, b.date, activitiesOrder);
+        })
+        .map((activity, i) => {
+          const { date } = activity;
+          const prev: IActivity = activities[i - 1] || null;
+          if (!prev) {
+            return { ...activity, side: ESide.RIGHT };
+          }
+          if (+date !== +prev.date) {
+            currentSide = negateSides[currentSide as keyof INegateSides];
+          }
+          return { ...activity, side: currentSide };
+        });
+      return mapped;
+    },
+    [activitiesOrder]
+  );
 
   const mappedActivities: IActivity[] = autoActivities
     ? mapActivities(activities)
@@ -79,20 +89,26 @@ const ActivitiesBlock: FC<Props> = ({
     setShowActivities(!showActivities);
   };
 
-    const classes = {
-      wrapper: (
-        className: string | undefined,
-        side: string | undefined
-      ): string =>
-        `activity-wrapper mb-8 flex justify-between items-center w-full ${sideClass(
-          side
-        )} ${className || ""} cursor-default`,
-      indexes: {
-        wrapper:
-          "z-20 flex items-center order-1 bg-gray-800 mx-auto shadow-md max-w-1 h-8 rounded-full transform hover:-translate-y-1 hover:scale-110 transition duration-200 ease-linear",
-        bullet: "min-w-1 mx-auto font-semibold text-md text-white text-center"
-      }
-    };
+  const classes = {
+    wrapper: (
+      className: string | undefined,
+      side: string | undefined
+    ): string =>
+      `activity-wrapper mb-8 flex justify-between items-center w-full ${sideClass(
+        side
+      )} ${className || ""} cursor-default`,
+    indexes: {
+      wrapper:
+        "z-20 flex items-center order-1 bg-gray-800 mx-auto shadow-md max-w-1 h-8 rounded-full transform hover:-translate-y-1 hover:scale-110 transition duration-200 ease-linear",
+      bullet: "min-w-1 mx-auto font-semibold text-md text-white text-center p-2"
+    }
+  };
+
+  const bulletType: { [key: string]: string } = {
+    [EBulletType.NUMERIC]: `${index + 1}`,
+    [EBulletType.TIMING]: `${blockText}`
+  };
+  const blockBulletText = bulletType[blockBulletsType];
 
   return (
     <div
@@ -102,7 +118,12 @@ const ActivitiesBlock: FC<Props> = ({
       {showActivities
         ? mappedActivities.map((activity, i) => {
             if (activitiesLimit && i >= activitiesLimit) return null;
-            let { className, side } = activity;
+            let { className, side, date } = activity;
+            const bulletType: { [key: string]: string } = {
+              [EBulletType.NUMERIC]: `${i + 1}`,
+              [EBulletType.TIMING]: dateFormating(date)
+            };
+            const bulletText = bulletType[bulletsType];
             return (
               <div
                 className={classes.wrapper(className, side)}
@@ -111,7 +132,7 @@ const ActivitiesBlock: FC<Props> = ({
               >
                 <div className="order-1 w-5/12"></div>
                 <div className={classes.indexes.wrapper}>
-                  <h1 className={classes.indexes.bullet}>{i + 1}</h1>
+                  <h1 className={classes.indexes.bullet}>{bulletText}</h1>
                 </div>
                 <Activity activity={activity} />
               </div>
@@ -138,7 +159,7 @@ const ActivitiesBlock: FC<Props> = ({
         onMouseLeave={showActivitiesCount}
         onClick={toggleActivities}
       >
-        <h1 className={classes.indexes.bullet}>{blockText}</h1>
+        <h1 className={classes.indexes.bullet}>{blockBulletText}</h1>
       </div>
     </div>
   );

@@ -19,3 +19,8 @@ export enum EOrder {
   ASC = "asc",
   DESC = "desc"
 }
+
+export enum EBulletType {
+  NUMERIC = "numeric",
+  TIMING = "time"
+}
