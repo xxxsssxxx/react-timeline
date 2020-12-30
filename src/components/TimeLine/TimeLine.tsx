@@ -1,10 +1,14 @@
 import { useState, useMemo, useEffect, FC } from "react";
+
 import ActivitiesBlock from "../ActivitiesBlock/ActivitiesBlock";
 import Tools from "../Tool/Tools";
-import { IActivity, IBlock } from "../../interfaces/interfaces";
 import BaseButton from "../Base/Button/BaseButton";
+import RangeDots from "../RangeDots/RangeDots";
+
+import { IActivity, IBlock } from "../../interfaces/interfaces";
 import { EOrder, EBulletType } from "../../enums/enums";
-import { dateFormating, isDateObject, sortDates, sortString } from "../../Utils/utils";
+import { dateFormating, isDateObject, sortDates, sortString, daysBetween, TDate } from "../../Utils/utils";
+
 type Props = {
   activities?: IActivity[];
   showTools?: boolean;
@@ -21,6 +25,8 @@ type Props = {
   activitiesOrder?: string;
   activitiesBulletsType?: string;
   blockBulletsType?: string;
+  blocksLongRange?: number;
+  activitiesLongRange?: number;
   blockLoadCount?: string | boolean;
   activitiesLoadCount?: boolean;
 };
@@ -28,6 +34,8 @@ const TimeLine: FC<Props> = ({
   blocks,
   showTools = true,
   folded = true,
+  blocksLongRange = 0,
+  activitiesLongRange = 0,
   maxBlocks = 5,
   maxActivities,
   blocksOffset = 5,
@@ -47,34 +55,37 @@ const TimeLine: FC<Props> = ({
   const [moreButtonText, setMoreButtonText] = useState("more");
   const [blockLimit, setBlockLimit] = useState(maxBlocks);
 
-  const mapBlocks = useMemo(
-    () => (blocks: IBlock[]): IBlock[] => {
-      const mapped: IBlock[] = blocks
-        .sort((a: IBlock, b: IBlock) => {
-          if (isDateObject(a.blockText) && isDateObject(b.blockText)) {
-            return sortDates(a.blockText, b.blockText, blocksOrder);
-          }
+  const mapBlocks = useMemo(() => (blocks: IBlock[]): IBlock[] => {
+    const mapped: IBlock[] = blocks.sort((a: IBlock, b: IBlock) => {
+      if (isDateObject(a.blockText) && isDateObject(b.blockText)) {
+        return sortDates(a.blockText, b.blockText, blocksOrder);
+      }
 
-          if (
-            typeof a.blockText === "string" &&
-            typeof b.blockText === "string"
-          ) {
-            return sortString(a.blockText, b.blockText, blocksOrder);
-          }
+      if (
+        typeof a.blockText === "string" &&
+        typeof b.blockText === "string"
+      ) {
+        return sortString(a.blockText, b.blockText, blocksOrder);
+      }
 
-          return 1;
-        })
-        .map((block) => {
-          const { blockText } = block;
-          if (isDateObject(blockText)) {
-            return { ...block, blockText: dateFormating(blockText, false) };
-          }
-          return block;
-        });
-      return mapped;
-    },
-    [blocksOrder]
-  );
+      return 1;
+    })
+    .map((block, i) => {
+      const { blockText } = block;
+      const prevBlock = blocks[i - 1];
+      const isLongRange = i > 0 ? isLongRangeElement(blockText, prevBlock.blockText) : false;
+      if (isDateObject(blockText)) {
+        return {
+          ...block,
+          blockText: dateFormating(blockText, false),
+          isLongRange
+        };
+      }
+      return { ...block, isLongRange };
+    });
+    return mapped;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const loadMoreBlocks = () => {
     setBlockLimit((prevSatate) => prevSatate + blocksOffset);
@@ -83,6 +94,18 @@ const TimeLine: FC<Props> = ({
       setLoadCount(count);
       setMoreButtonText(`more (${count})`);
     }
+  };
+
+  const isLongRangeElement = (a: TDate, b: TDate): boolean => {
+    const aDate = new Date(a);
+    const bDate = new Date(b);
+    if (!isDateObject(aDate) || !isDateObject(bDate)) return false;
+    const mapRangeConditions: { [key: string]: boolean } = {
+      [EOrder.DESC]: blocksLongRange ? blocksLongRange <= daysBetween(a, b) : false,
+      [EOrder.ASC]: blocksLongRange ? blocksLongRange <= daysBetween(b, a) : false
+    };
+    const isRangeLonger = mapRangeConditions[blocksOrder];
+    return isRangeLonger;
   };
 
   useEffect(() => {
@@ -106,30 +129,30 @@ const TimeLine: FC<Props> = ({
     >
       {showTools ? <Tools title={toolsTitle} /> : null}
       <div className="relative wrap overflow-hidden p-10 h-full mb-2">
-        <div
-          className="border-2-2 absolute border-opacity-20 border-gray-700 h-full border"
-          style={{ left: "50%" }}
-        ></div>
         {mappedBlocks.map(
-          ({ activities, blockText, max, offset, order, auto, bullets, loadsCount }, i) => {
+          ({ activities, blockText, max, offset, order, auto, bullets, loadsCount, isLongRange, longRange }, i) => {
             if (i >= blockLimit) return null;
-            const autoActivitiesAcc =
-              auto === undefined ? autoActivities : auto;
+            const autoActivitiesAcc = auto === undefined ? autoActivities : auto;
             return (
-              <ActivitiesBlock
-                activities={activities}
-                blockText={blockText}
-                folded={!!folded}
-                maxActivities={max || maxActivities}
-                activitiesOffset={offset || activitiesOffset}
-                activitiesOrder={order || activitiesOrder}
-                activitiesLoadCount={loadsCount || activitiesLoadCount}
-                autoActivities={autoActivitiesAcc}
-                key={i}
-                index={i}
-                blockBulletsType={blockBulletsType}
-                bulletsType={bullets || activitiesBulletsType}
-              />
+              <div key={i} className="flex flex-col">
+                {isLongRange ? <RangeDots /> : null}
+                <ActivitiesBlock
+                  activities={activities}
+                  blockText={blockText}
+                  folded={!!folded}
+                  maxActivities={max || maxActivities}
+                  activitiesOffset={offset || activitiesOffset}
+                  activitiesOrder={order || activitiesOrder}
+                  activitiesLoadCount={loadsCount || activitiesLoadCount}
+                  autoActivities={autoActivitiesAcc}
+                  key={i}
+                  index={i}
+                  blockBulletsType={blockBulletsType}
+                  bulletsType={bullets || activitiesBulletsType}
+                  activitiesLongRange={longRange || activitiesLongRange}
+                />
+                <div className="border-2-2 border-opacity-20 border-gray-700 border h-12 mx-auto"></div>
+              </div>
             );
           }
         )}

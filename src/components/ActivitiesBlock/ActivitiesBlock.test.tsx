@@ -283,4 +283,37 @@ describe("Activity", () => {
     });
   });
 
+  describe("Range activities", () => {
+    test("Render range if activitiesLongRange is set", async() => {
+      const longRages = 3;
+      render(
+        <ActivitiesBlock
+          activities={mockActivities}
+          blockText={blocksAutoFalse[0].blockText}
+          folded={false}
+          autoActivities={true}
+          activitiesLongRange={10}
+          maxActivities={mockActivities.length}
+        />
+      );
+      const rangeDots = await screen.findAllByTestId("range-dots");
+      expect(rangeDots).toBeDefined();
+      expect(rangeDots).toHaveLength(longRages);
+    });
+
+    test("Doesnt render range if activitiesLongRange isnt set", async() => {
+      render(
+        <ActivitiesBlock
+          activities={mockActivities}
+          blockText={blocksAutoFalse[0].blockText}
+          folded={false}
+          autoActivities={true}
+          maxActivities={mockActivities.length}
+        />
+      );
+      const rangeDots = screen.queryByTestId("range-dots");
+      expect(rangeDots).toBeNull();
+    });
+  });
+
 });

@@ -11,10 +11,10 @@ type Props = {
 };
 
 const Activity: React.FC<Props> = ({ activity }) => {
-  const { text, assignee, tags, date, href } = activity;
+  const { text, assignee, tags, date, href, isLongRange } = activity;
 
   const classes = {
-    wrapper: "order-1 bg-gray-400 rounded-lg shadow-xl w-5/12 px-6 py-4",
+    wrapper: `order-1 bg-gray-400 rounded-lg shadow-xl w-5/12 px-6 py-4 ${isLongRange ? "mt-24" : ""}`,
     titleWrapper: "mb-3 flex justify-between flex-wrap",
     title: "font-bold text-gray-800 text-lg truncate",
     textWrapper:

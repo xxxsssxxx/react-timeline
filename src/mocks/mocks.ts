@@ -65,7 +65,7 @@ export const activities: IActivity[] = [
     side: ESide.RIGHT
   },
   {
-    text: "Went for a walk",
+    text: "Do homework",
     href: "https://google.com",
     date: new Date(),
     tags: [
@@ -79,7 +79,7 @@ export const activities: IActivity[] = [
     side: ESide.LEFT
   },
   {
-    text: "Take out trash",
+    text: "Go out with doggo",
     date: addMinutes(new Date(), 45),
     tags: [
       {
@@ -92,7 +92,7 @@ export const activities: IActivity[] = [
     side: ESide.LEFT
   },
   {
-    text: "Pay the phone bill",
+    text: "Volleyball",
     date: addMinutes(new Date(), 42),
     tags: [
       {
@@ -115,7 +115,7 @@ export const activities: IActivity[] = [
     side: ESide.RIGHT
   },
   {
-    text: "Pay the phone bill",
+    text: "Sport class",
     date: addMinutes(new Date(), 50),
     tags: [
       {
@@ -138,7 +138,7 @@ export const activities: IActivity[] = [
     side: ESide.RIGHT
   },
   {
-    text: "Went for a walk",
+    text: "Swimming pool",
     href: "https://google.com",
     date: addMinutes(new Date(), 50),
     tags: [
@@ -152,7 +152,7 @@ export const activities: IActivity[] = [
     side: ESide.LEFT
   },
   {
-    text: "Take out trash",
+    text: "Wash the dishes",
     date: addMinutes(new Date(), 12),
     tags: [
       {
@@ -165,7 +165,7 @@ export const activities: IActivity[] = [
     side: ESide.LEFT
   },
   {
-    text: "Pay the phone bill",
+    text: "Clean room",
     date: new Date(),
     tags: [
       {
@@ -188,7 +188,7 @@ export const activities: IActivity[] = [
     side: ESide.RIGHT
   },
   {
-    text: "Pay the phone bill",
+    text: "Dance class",
     date: addMinutes(new Date(), 45),
     tags: [
       {

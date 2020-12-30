@@ -1,6 +1,6 @@
 import { EOrder } from "../enums/enums";
 import { addDays } from "../mocks/mocks";
-import { dateFormating, sortDates, sortString } from "./utils";
+import { dateFormating, sortDates, sortString, isDateObject } from "./utils";
 
 describe("Format date", () => {
 
@@ -47,5 +47,20 @@ describe("Sort", () => {
       const descSort = sortString("A", "B", EOrder.DESC);
       expect(descSort).toBeGreaterThan(0);
     });
+  });
+});
+
+describe("Is date object", () => {
+  test("Return true if its date object", () => {
+    const isDate = isDateObject(new Date());
+    expect(isDate).toBe(true);
+  });
+  test("Return false if its date object but invalid date", () => {
+    const isDate = isDateObject(new Date("Invalid"));
+    expect(isDate).toBe(false);
+  });
+  test("Return false if its string", () => {
+    const isDate = isDateObject(new Date().toLocaleDateString());
+    expect(isDate).toBe(false);
   });
 });

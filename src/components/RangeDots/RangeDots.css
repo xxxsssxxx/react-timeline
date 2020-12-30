@@ -1,0 +1,13 @@
+.range-dots-wrapper {
+  max-width: 1rem;
+  display: flex;
+  margin: 1.5rem auto;
+  height: 3rem;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.range-dot {
+  font-size: 0.4rem;
+}
