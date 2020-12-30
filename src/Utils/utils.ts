@@ -54,3 +54,9 @@ export const daysBetween = (startDate: TDate, endDate: TDate): number => {
   const daysBetween = (treatAsUTC(endDate).getTime() - treatAsUTC(startDate).getTime()) / millisecondsPerDay;
   return daysBetween;
 };
+
+export const minutesBetween = (startDate: TDate, endDate: TDate): number => {
+  const diff = Math.abs(treatAsUTC(startDate).getTime() - treatAsUTC(endDate).getTime());
+  const minutesBetween = Math.floor((diff/1000)/60);
+  return minutesBetween;
+};

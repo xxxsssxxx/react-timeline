@@ -36,6 +36,7 @@ const App = () => {
           blockLoadCount={true}
           activitiesLoadCount={true}
           blocksLongRange={3}
+          activitiesLongRange={10}
         />
       </div>
     </div>

@@ -25,7 +25,8 @@ type Props = {
   activitiesOrder?: string;
   activitiesBulletsType?: string;
   blockBulletsType?: string;
-  blocksLongRange?: number,
+  blocksLongRange?: number;
+  activitiesLongRange?: number;
   blockLoadCount?: string | boolean;
   activitiesLoadCount?: boolean;
 };
@@ -34,6 +35,7 @@ const TimeLine: FC<Props> = ({
   showTools = true,
   folded = true,
   blocksLongRange = 20,
+  activitiesLongRange = 20,
   maxBlocks = 5,
   maxActivities,
   blocksOffset = 5,
@@ -100,8 +102,8 @@ const TimeLine: FC<Props> = ({
     const bDate = new Date(b);
     if (!isDateObject(aDate) || !isDateObject(bDate)) return false;
     const mapRangeConditions: { [key: string]: boolean } = {
-      [EOrder.DESC]: blocksLongRange >= daysBetween(a, b),
-      [EOrder.ASC]: blocksLongRange >= daysBetween(b, a)
+      [EOrder.DESC]: blocksLongRange <= daysBetween(a, b),
+      [EOrder.ASC]: blocksLongRange <= daysBetween(b, a)
     };
     const isRangeLonger = mapRangeConditions[blocksOrder];
     return isRangeLonger;
@@ -129,11 +131,11 @@ const TimeLine: FC<Props> = ({
       {showTools ? <Tools title={toolsTitle} /> : null}
       <div className="relative wrap overflow-hidden p-10 h-full mb-2">
         {mappedBlocks.map(
-          ({ activities, blockText, max, offset, order, auto, bullets, loadsCount, isLongRange }, i) => {
+          ({ activities, blockText, max, offset, order, auto, bullets, loadsCount, isLongRange, longRange }, i) => {
             if (i >= blockLimit) return null;
             const autoActivitiesAcc = auto === undefined ? autoActivities : auto;
             return (
-              <div key={i}>
+              <div key={i} className="flex flex-col">
                 {isLongRange ? <RangeDots /> : null}
                 <ActivitiesBlock
                   activities={activities}
@@ -148,8 +150,10 @@ const TimeLine: FC<Props> = ({
                   index={i}
                   blockBulletsType={blockBulletsType}
                   bulletsType={bullets || activitiesBulletsType}
+                  activitiesLongRange={longRange || activitiesLongRange}
                   isLongRange={isLongRange}
                 />
+                <div className="border-2-2 border-opacity-20 border-gray-700 border h-12 mx-auto"></div>
               </div>
             );
           }

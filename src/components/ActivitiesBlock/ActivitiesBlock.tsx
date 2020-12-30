@@ -1,12 +1,18 @@
 import { FC, useState, MouseEvent, useMemo, useEffect } from "react";
 import { ESide, EOrder, EBulletType } from "../../enums/enums";
 import { IActivity } from "../../interfaces/interfaces";
+import {
+  dateFormating,
+  sortDates,
+  isDateObject,
+  TDate,
+  minutesBetween
+} from "../../Utils/utils";
 
 import Activity from "../Activity/Activity";
 import BaseTooltip from "../Base/Tooltip/BaseTooltip";
 import BaseButton from "../Base/Button/BaseButton";
-import { dateFormating, sortDates } from "../../Utils/utils";
-
+import RangeDots from "../RangeDots/RangeDots";
 interface INegateSides {
   [ESide.LEFT]: string;
   [ESide.RIGHT]: string
@@ -29,6 +35,7 @@ type Props = {
   bulletsType?: string;
   blockBulletsType?: string;
   activitiesLoadCount?: string | boolean;
+  activitiesLongRange?: number;
   isLongRange?: boolean;
 };
 
@@ -44,6 +51,7 @@ const ActivitiesBlock: FC<Props> = ({
   activitiesLoadCount = "",
   bulletsType = EBulletType.NUMERIC,
   blockBulletsType = EBulletType.NUMERIC,
+  activitiesLongRange = 20,
   isLongRange = false
 }) => {
   const [mappedActivities, setMappedActivities] = useState(activities);
@@ -56,24 +64,25 @@ const ActivitiesBlock: FC<Props> = ({
   const mapActivities = useMemo(
     () => (activities: IActivity[]): IActivity[] => {
       let currentSide: string = ESide.RIGHT;
-      const mapped: IActivity[] = activities
-        .sort((a, b) => {
-          return sortDates(a.date, b.date, activitiesOrder);
-        })
-        .map((activity, i) => {
-          const { date } = activity;
-          const prev: IActivity = activities[i - 1] || null;
-          if (!prev) {
-            return { ...activity, side: ESide.RIGHT };
-          }
-          if (+date !== +prev.date) {
-            currentSide = negateSides[currentSide as keyof INegateSides];
-          }
-          return { ...activity, side: currentSide };
-        });
+      const mapped: IActivity[] = activities.sort((a, b) => {
+        return sortDates(a.date, b.date, activitiesOrder);
+      })
+      .map((activity, i) => {
+        const { date } = activity;
+        const prevActivity = activities[i - 1];
+        const isLongRange = i > 0 ? isLongRangeElement(date, prevActivity.date) : false;
+        if (!prevActivity) {
+          return { ...activity, side: ESide.RIGHT, isLongRange };
+        }
+        if (+date !== +prevActivity.date) {
+          currentSide = negateSides[currentSide as keyof INegateSides];
+        }
+        return { ...activity, side: currentSide, isLongRange };
+      });
       return mapped;
     },
-    [activitiesOrder]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
 
   const sideClass = (side: string = ESide.RIGHT): string => {
@@ -97,6 +106,18 @@ const ActivitiesBlock: FC<Props> = ({
     setShowActivities(!showActivities);
   };
 
+  const isLongRangeElement = (a: TDate, b: TDate): boolean => {
+    const aDate = new Date(a);
+    const bDate = new Date(b);
+    if (!isDateObject(aDate) || !isDateObject(bDate)) return false;
+    const mapRangeConditions: { [key: string]: boolean } = {
+      [EOrder.DESC]: activitiesLongRange <= minutesBetween(a, b),
+      [EOrder.ASC]: activitiesLongRange <= minutesBetween(b, a)
+    };
+    const isRangeLonger = mapRangeConditions[activitiesOrder];
+    return isRangeLonger;
+  };
+
   useEffect(() => {
     if (autoActivities) {
       if (!!activitiesLoadCount && activitiesLimit < activities.length) {
@@ -114,17 +135,18 @@ const ActivitiesBlock: FC<Props> = ({
       className: string | undefined,
       side: string | undefined
     ): string =>
-      `activity-wrapper mb-8 flex justify-between items-center w-full ${sideClass(
+      `activity-wrapper flex justify-between items-start w-full ${sideClass(
         side
       )} ${className || ""} cursor-default`,
     indexes: {
-      wrapper:
-        "z-20 flex items-center order-1 bg-gray-800 mx-auto shadow-md max-w-1 h-8 rounded-full transform hover:-translate-y-1 hover:scale-110 transition duration-200 ease-linear",
+      wrapper: "z-20 flex flex-col items-center order-1 mx-auto max-w-1",
       bullet: "min-w-1 mx-auto font-semibold text-md text-white text-center p-2"
     },
     block: {
-      wrapper: (): string => `block-wrapper ${!isLongRange ? "m-10" : "mt-6"} cursor-pointer relative flex flex-col items-center`
-    }
+      wrapper: "block-wrapper cursor-pointer relative flex flex-col items-center"
+    },
+    scale:
+      "transform hover:-translate-y-1 hover:scale-110 transition duration-200 ease-linear"
   };
 
   const bulletType: { [key: string]: string } = {
@@ -134,15 +156,11 @@ const ActivitiesBlock: FC<Props> = ({
   const blockBulletText = bulletType[blockBulletsType];
 
   return (
-    <div className={classes.block.wrapper()} data-testid="activities-block">
-      <div
-        className="border-2-2 absolute border-opacity-20 border-gray-700 h-full border"
-        style={{ left: "50%", height: "calc(100% + 2.5rem)" }}
-      ></div>
+    <div className={classes.block.wrapper} data-testid="activities-block">
       {showActivities
         ? mappedActivities.map((activity, i) => {
             if (activitiesLimit && i >= activitiesLimit) return null;
-            let { className, side, date } = activity;
+            let { className, side, date, isLongRange } = activity;
             const bulletType: { [key: string]: string } = {
               [EBulletType.NUMERIC]: `${i + 1}`,
               [EBulletType.TIMING]: dateFormating(date)
@@ -156,7 +174,13 @@ const ActivitiesBlock: FC<Props> = ({
               >
                 <div className="order-1 w-5/12 mt"></div>
                 <div className={classes.indexes.wrapper}>
-                  <h1 className={classes.indexes.bullet}>{bulletText}</h1>
+                  {isLongRange ? <RangeDots /> : null}
+                  <div
+                    className={`flex flex-col bg-gray-800 shadow-md rounded-full h-8 justify-center ${classes.scale}`}
+                  >
+                    <h1 className={classes.indexes.bullet}>{bulletText}</h1>
+                  </div>
+                  <div className="border-2-2 border-opacity-20 border-gray-700 border h-36 mx-auto" />
                 </div>
                 <Activity activity={activity} />
               </div>
@@ -178,7 +202,7 @@ const ActivitiesBlock: FC<Props> = ({
       ) : null}
       <div
         data-testid="bullet"
-        className={`${classes.indexes.wrapper} min-w-2`}
+        className={`${classes.indexes.wrapper} ${classes.scale} min-w-2 bg-gray-800 shadow-md rounded-full h-8 justify-center`}
         onMouseEnter={showActivitiesCount}
         onMouseLeave={showActivitiesCount}
         onClick={toggleActivities}
