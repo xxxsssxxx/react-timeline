@@ -8,6 +8,7 @@ export interface IBlock {
   auto?: boolean;
   bullets?: string;
   loadsCount?: string;
+  isLongRange?: boolean;
 }
 
 export interface IActivity {

@@ -29,6 +29,7 @@ type Props = {
   bulletsType?: string;
   blockBulletsType?: string;
   activitiesLoadCount?: string | boolean;
+  isLongRange?: boolean;
 };
 
 const ActivitiesBlock: FC<Props> = ({
@@ -42,7 +43,8 @@ const ActivitiesBlock: FC<Props> = ({
   autoActivities = false,
   activitiesLoadCount = "",
   bulletsType = EBulletType.NUMERIC,
-  blockBulletsType = EBulletType.NUMERIC
+  blockBulletsType = EBulletType.NUMERIC,
+  isLongRange = false
 }) => {
   const [mappedActivities, setMappedActivities] = useState(activities);
   const [showCount, setShowCount] = useState(false);
@@ -119,6 +121,9 @@ const ActivitiesBlock: FC<Props> = ({
       wrapper:
         "z-20 flex items-center order-1 bg-gray-800 mx-auto shadow-md max-w-1 h-8 rounded-full transform hover:-translate-y-1 hover:scale-110 transition duration-200 ease-linear",
       bullet: "min-w-1 mx-auto font-semibold text-md text-white text-center p-2"
+    },
+    block: {
+      wrapper: (): string => `block-wrapper ${!isLongRange ? "m-10" : "mt-6"} cursor-pointer relative flex flex-col items-center`
     }
   };
 
@@ -129,10 +134,11 @@ const ActivitiesBlock: FC<Props> = ({
   const blockBulletText = bulletType[blockBulletsType];
 
   return (
-    <div
-      className="block-wrapper mt-20 cursor-pointer relative flex flex-col items-center"
-      data-testid="activities-block"
-    >
+    <div className={classes.block.wrapper()} data-testid="activities-block">
+      <div
+        className="border-2-2 absolute border-opacity-20 border-gray-700 h-full border"
+        style={{ left: "50%", height: "calc(100% + 2.5rem)" }}
+      ></div>
       {showActivities
         ? mappedActivities.map((activity, i) => {
             if (activitiesLimit && i >= activitiesLimit) return null;
@@ -148,7 +154,7 @@ const ActivitiesBlock: FC<Props> = ({
                 key={i}
                 data-testid="activity-wrapper"
               >
-                <div className="order-1 w-5/12"></div>
+                <div className="order-1 w-5/12 mt"></div>
                 <div className={classes.indexes.wrapper}>
                   <h1 className={classes.indexes.bullet}>{bulletText}</h1>
                 </div>

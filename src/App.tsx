@@ -12,7 +12,7 @@ const App = () => {
   let showTools: boolean = true;
   let type: string = EType.NUMERIC;
   const autoBlocks: boolean = true;
-  const textBlocksNames: boolean = true;
+  const textBlocksNames: boolean = false;
   // Looks bad its just for mocking and testing
   const mockedBlocks: IBlock[] = autoBlocks ? textBlocksNames ? blocksText : blocks : blocksAutoFalse;
 
@@ -35,6 +35,7 @@ const App = () => {
           blocksOffset={3}
           blockLoadCount={true}
           activitiesLoadCount={true}
+          blocksLongRange={3}
         />
       </div>
     </div>

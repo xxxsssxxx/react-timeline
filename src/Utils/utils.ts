@@ -1,5 +1,5 @@
 import { EOrder } from "../enums/enums";
-type TDate = string | Date | number;
+export type TDate = string | Date;
 
 export const isDateObject = (date: unknown): boolean => {
   return Object.prototype.toString.call(date) === "[object Date]";
@@ -41,4 +41,16 @@ export const sortString = (a: string, b: string, order: string): number => {
     return b.localeCompare(a);
   }
   return a.localeCompare(b);
+};
+
+export const treatAsUTC = (date: string | Date): Date => {
+  var result = new Date(date);
+  result.setMinutes(result.getMinutes() - result.getTimezoneOffset());
+  return result;
+};
+
+export const daysBetween = (startDate: TDate, endDate: TDate): number => {
+  var millisecondsPerDay = 24 * 60 * 60 * 1000;
+  const daysBetween = (treatAsUTC(endDate).getTime() - treatAsUTC(startDate).getTime()) / millisecondsPerDay;
+  return daysBetween;
 };
