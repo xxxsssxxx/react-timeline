@@ -23,7 +23,7 @@ const App = () => {
           {title}
         </h1>
         <TimeLine
-          blocks={shuffle(mockedBlocks)}
+          blocks={shuffle(blocksText)}
           showTools={showTools}
           type={type}
           folded={true}

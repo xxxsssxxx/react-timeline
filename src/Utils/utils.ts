@@ -1,8 +1,11 @@
 import { EOrder } from "../enums/enums";
 export type TDate = string | Date;
 
-export const isDateObject = (date: unknown): boolean => {
-  return Object.prototype.toString.call(date) === "[object Date]";
+export const isDateObject = (date: string | Date): boolean => {
+  if (typeof date !== "string" && Object.prototype.toString.call(date) === "[object Date]") {
+    return !isNaN(date.getTime());
+  }
+  return false;
 };
 
 export const dateFormating = (

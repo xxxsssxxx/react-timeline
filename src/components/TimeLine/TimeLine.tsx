@@ -34,8 +34,8 @@ const TimeLine: FC<Props> = ({
   blocks,
   showTools = true,
   folded = true,
-  blocksLongRange = 20,
-  activitiesLongRange = 20,
+  blocksLongRange = 0,
+  activitiesLongRange = 0,
   maxBlocks = 5,
   maxActivities,
   blocksOffset = 5,
@@ -97,13 +97,12 @@ const TimeLine: FC<Props> = ({
   };
 
   const isLongRangeElement = (a: TDate, b: TDate): boolean => {
-    if (!autoBlocks) return false;
     const aDate = new Date(a);
     const bDate = new Date(b);
     if (!isDateObject(aDate) || !isDateObject(bDate)) return false;
     const mapRangeConditions: { [key: string]: boolean } = {
-      [EOrder.DESC]: blocksLongRange <= daysBetween(a, b),
-      [EOrder.ASC]: blocksLongRange <= daysBetween(b, a)
+      [EOrder.DESC]: blocksLongRange ? blocksLongRange <= daysBetween(a, b) : false,
+      [EOrder.ASC]: blocksLongRange ? blocksLongRange <= daysBetween(b, a) : false
     };
     const isRangeLonger = mapRangeConditions[blocksOrder];
     return isRangeLonger;
@@ -151,7 +150,6 @@ const TimeLine: FC<Props> = ({
                   blockBulletsType={blockBulletsType}
                   bulletsType={bullets || activitiesBulletsType}
                   activitiesLongRange={longRange || activitiesLongRange}
-                  isLongRange={isLongRange}
                 />
                 <div className="border-2-2 border-opacity-20 border-gray-700 border h-12 mx-auto"></div>
               </div>

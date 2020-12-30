@@ -20,7 +20,7 @@ const RangeDots: FC<Props> = ({ count = 3, times = 1, icon = faCircle }) => {
   }
 
   return (
-    <div className={"range-dots-wrapper text-gray-700 opacity-70"}>{items}</div>
+    <div className={"range-dots-wrapper text-gray-700 opacity-70"} data-testid="range-dots">{items}</div>
   );
 };
 

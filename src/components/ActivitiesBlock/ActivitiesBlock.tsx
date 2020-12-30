@@ -36,7 +36,6 @@ type Props = {
   blockBulletsType?: string;
   activitiesLoadCount?: string | boolean;
   activitiesLongRange?: number;
-  isLongRange?: boolean;
 };
 
 const ActivitiesBlock: FC<Props> = ({
@@ -51,8 +50,7 @@ const ActivitiesBlock: FC<Props> = ({
   activitiesLoadCount = "",
   bulletsType = EBulletType.NUMERIC,
   blockBulletsType = EBulletType.NUMERIC,
-  activitiesLongRange = 20,
-  isLongRange = false
+  activitiesLongRange = 20
 }) => {
   const [mappedActivities, setMappedActivities] = useState(activities);
   const [showCount, setShowCount] = useState(false);
@@ -109,10 +107,13 @@ const ActivitiesBlock: FC<Props> = ({
   const isLongRangeElement = (a: TDate, b: TDate): boolean => {
     const aDate = new Date(a);
     const bDate = new Date(b);
-    if (!isDateObject(aDate) || !isDateObject(bDate)) return false;
     const mapRangeConditions: { [key: string]: boolean } = {
-      [EOrder.DESC]: activitiesLongRange <= minutesBetween(a, b),
-      [EOrder.ASC]: activitiesLongRange <= minutesBetween(b, a)
+      [EOrder.DESC]: activitiesLongRange
+        ? activitiesLongRange <= minutesBetween(aDate, bDate)
+        : false,
+      [EOrder.ASC]: activitiesLongRange
+        ? activitiesLongRange <= minutesBetween(bDate, aDate)
+        : false
     };
     const isRangeLonger = mapRangeConditions[activitiesOrder];
     return isRangeLonger;

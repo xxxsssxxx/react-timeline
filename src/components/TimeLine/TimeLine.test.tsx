@@ -430,4 +430,111 @@ describe("TimeLine", () => {
       });
     });
   });
+
+  describe("Range blocks", () => {
+    test("Render range if blocksLongRange is set", async() => {
+      const longRages = 6;
+      render(
+        <TimeLine
+          blocks={blocks}
+          maxBlocks={blocks.length}
+          blocksLongRange={3}
+          autoBlocks={true}
+        />
+      );
+      const rangeDots = await screen.findAllByTestId("range-dots");
+      expect(rangeDots).toBeDefined();
+      expect(rangeDots).toHaveLength(longRages);
+    });
+
+    test("longRange is prioritized to activitiesLongRange", async() => {
+      const longRages = 3;
+      const copy = JSON.parse(JSON.stringify(blocks));
+      copy[0].longRange = 10;
+      render(
+        <TimeLine
+          blocks={copy}
+          maxBlocks={1}
+          maxActivities={blocks[0].activities.length}
+          blocksLongRange={3}
+          activitiesLongRange={3}
+          autoBlocks={true}
+          autoActivities={true}
+          folded={false}
+        />
+      );
+      const rangeDots = await screen.findAllByTestId("range-dots");
+      expect(rangeDots).toBeDefined();
+      expect(rangeDots).toHaveLength(longRages);
+    });
+
+    test("Render range if blocksLongRange is set and asc order", async() => {
+      const longRages = 6;
+      render(
+        <TimeLine
+          blocks={blocks}
+          maxBlocks={blocks.length}
+          blocksLongRange={3}
+          autoBlocks={true}
+          blocksOrder={EOrder.ASC}
+        />
+      );
+      const rangeDots = await screen.findAllByTestId("range-dots");
+      expect(rangeDots).toBeDefined();
+      expect(rangeDots).toHaveLength(longRages);
+    });
+
+    test("Render range if auto is false isLongRange set on block", async() => {
+      const longRages = 1;
+      const copy = JSON.parse(JSON.stringify(blocks));
+      copy[0].isLongRange = true;
+      render(
+        <TimeLine
+          blocks={copy}
+          maxBlocks={copy.length}
+          blocksLongRange={3}
+          autoBlocks={false}
+        />
+      );
+      const rangeDots = await screen.findAllByTestId("range-dots");
+      expect(rangeDots).toBeDefined();
+      expect(rangeDots).toHaveLength(longRages);
+    });
+
+    test("Doesnt render range if blocksLongRange isnt set", () => {
+      render(
+        <TimeLine
+          blocks={blocks}
+          maxBlocks={3}
+          autoBlocks={true}
+        />
+      );
+      const rangeDots = screen.queryByTestId("range-dots");
+      expect(rangeDots).toBeNull();
+    });
+
+    test("Doesnt render range if auto is false and no isLOngerRange on block set", () => {
+      render(
+        <TimeLine
+          blocks={blocks}
+          maxBlocks={3}
+          autoBlocks={false}
+        />
+      );
+      const rangeDots = screen.queryByTestId("range-dots");
+      expect(rangeDots).toBeNull();
+    });
+
+    test("Doesnt render range if blockText isnt a date", () => {
+      render(
+        <TimeLine
+          blocks={blocksText}
+          maxBlocks={blocksText.length}
+          autoBlocks={true}
+        />
+      );
+      const rangeDots = screen.queryByTestId("range-dots");
+      expect(rangeDots).toBeNull();
+    });
+  });
 });
