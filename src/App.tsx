@@ -1,7 +1,7 @@
 import React from "react";
 import TimeLine from "./components/TimeLine/TimeLine";
 
-import { EOrder, EType } from "./enums/enums";
+import { EOrder, ESkeletonsAnimate, EType } from "./enums/enums";
 import { IBlock } from "./interfaces/interfaces";
 
 
@@ -23,7 +23,7 @@ const App = () => {
           {title}
         </h1>
         <TimeLine
-          blocks={shuffle(blocksText)}
+          blocks={shuffle(mockedBlocks)}
           showTools={showTools}
           type={type}
           folded={true}
@@ -37,6 +37,8 @@ const App = () => {
           activitiesLoadCount={true}
           blocksLongRange={3}
           activitiesLongRange={10}
+          blocksLoading={false}
+          loadingAnimation={ESkeletonsAnimate.PULSE}
         />
       </div>
     </div>

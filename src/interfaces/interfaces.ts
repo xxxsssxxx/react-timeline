@@ -1,3 +1,5 @@
+import { ESkeletonsAnimate } from "../enums/enums";
+
 export interface IBlock {
   activities: IActivity[];
   blockText: string | Date;
@@ -9,7 +11,8 @@ export interface IBlock {
   bullets?: string;
   loadsCount?: string;
   isLongRange?: boolean;
-  longRange?: number
+  longRange?: number;
+  loading?: boolean;
 }
 
 export interface IActivity {
@@ -41,4 +44,9 @@ export interface IButtonTypes {
   primary: string,
   success: string,
   danger: string
+}
+
+export interface IAnimation {
+  [ESkeletonsAnimate.PULSE]: string
+  [ESkeletonsAnimate.BOUNCE]: string,
 }
