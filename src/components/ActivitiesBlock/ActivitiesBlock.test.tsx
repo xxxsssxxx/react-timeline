@@ -316,4 +316,37 @@ describe("Activity", () => {
     });
   });
 
+  describe("Skeletons", () => {
+    test("Show skeleton for block if blocksLoadin", async() => {
+      render(
+        <ActivitiesBlock
+          activities={mockActivities}
+          blockText={blocksAutoFalse[0].blockText}
+          folded={false}
+          autoActivities={true}
+          activitiesLongRange={10}
+          maxActivities={mockActivities.length}
+          blocksLoading={true}
+        />
+      );
+      const skeletons = await screen.findAllByTestId("skeleton-bullet");
+      expect(skeletons).toBeDefined();
+    });
+
+    test("Doesnt show skeleton for block", () => {
+      render(
+        <ActivitiesBlock
+          activities={mockActivities}
+          blockText={blocksAutoFalse[0].blockText}
+          folded={false}
+          autoActivities={true}
+          activitiesLongRange={10}
+          maxActivities={mockActivities.length}
+        />
+      );
+      const skeletons = screen.queryAllByTestId("skeleton-bullet");
+      expect(skeletons).toHaveLength(0);
+    });
+  });
+
 });
