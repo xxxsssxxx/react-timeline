@@ -17,7 +17,7 @@ import Activity from "../Activity/Activity";
 import BaseTooltip from "../Base/Tooltip/BaseTooltip";
 import BaseButton from "../Base/Button/BaseButton";
 import RangeDots from "../RangeDots/RangeDots";
-import SkeletonBullet from "../Skeletons/SkeletonBullet";
+import SkeletonBullet from "../Skeletons/Bullet/SkeletonBullet";
 interface INegateSides {
   [ESide.LEFT]: string;
   [ESide.RIGHT]: string;

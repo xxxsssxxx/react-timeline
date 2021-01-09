@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
-import { ESkeletonsAnimate } from "../../enums/enums";
-import { IAnimation } from "../../interfaces/interfaces";
+import { ESkeletonsAnimate } from "../../../enums/enums";
+import { IAnimation } from "../../../interfaces/interfaces";
 
 type Props = {
   wrapperClass?: string,
@@ -19,7 +19,10 @@ const SkeletonBullet: FC<Props> = ({
     [ESkeletonsAnimate.BOUNCE]: "animate-bounce"
   };
 
-  const [animation] = useState(animationClass[animate as keyof IAnimation]);
+  const defaultAnimation =
+    animationClass[animate as keyof IAnimation] || "animate-pulse";
+
+  const [animation] = useState(defaultAnimation);
 
 
   return (
