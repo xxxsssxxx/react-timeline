@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, FC } from "react";
+import { useState, useMemo, useEffect, FC, MouseEvent } from "react";
 
 import ActivitiesBlock from "../ActivitiesBlock/ActivitiesBlock";
 import Tools from "../Tool/Tools";
@@ -32,6 +32,7 @@ type Props = {
   blocksLoading?: boolean;
   activitiesLoading?: boolean;
   loadingAnimation?: string;
+  onBlockBulletClick?: (e: MouseEvent, block?: IBlock) => void;
 };
 const TimeLine: FC<Props> = ({
   blocks,
@@ -53,7 +54,8 @@ const TimeLine: FC<Props> = ({
   activitiesBulletsType = EBulletType.NUMERIC,
   blocksLoading = false,
   activitiesLoading = false,
-  loadingAnimation = ESkeletonsAnimate.PULSE
+  loadingAnimation = ESkeletonsAnimate.PULSE,
+  onBlockBulletClick = () => false
 }) => {
   const [mappedBlocks, setMappedBlocks] = useState(blocks);
   const [loadCount, setLoadCount] = useState(blockLoadCount);
@@ -97,6 +99,10 @@ const TimeLine: FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
+
+  const emitBulletClick = (e: MouseEvent, block?: IBlock): void => {
+    onBlockBulletClick(e, block);
+  };
 
   const loadMoreBlocks = () => {
     setBlockLimit((prevSatate) => prevSatate + blocksOffset);
@@ -145,8 +151,8 @@ const TimeLine: FC<Props> = ({
       {showTools ? <Tools title={toolsTitle} /> : null}
       <div className="relative wrap overflow-hidden p-10 h-full mb-2">
         {mappedBlocks.map(
-          (
-            {
+          (block, i) => {
+            const {
               activities,
               blockText,
               max,
@@ -158,9 +164,7 @@ const TimeLine: FC<Props> = ({
               isLongRange,
               longRange,
               loading
-            },
-            i
-          ) => {
+            } = block;
             if (i >= blockLimit) return null;
             const autoActivitiesAcc =
               auto === undefined ? autoActivities : auto;
@@ -186,6 +190,7 @@ const TimeLine: FC<Props> = ({
                   blocksLoading={blocksLoading}
                   loading={loading || activitiesLoadAcc}
                   loadingAnimation={loadingAnimation}
+                  onBlockBulletClick={(e) => emitBulletClick(e, block)}
                 />
                 <div className="border-2-2 border-opacity-20 border-gray-700 border h-12 mx-auto"></div>
               </div>

@@ -5,7 +5,7 @@ import {
   EBulletType,
   ESkeletonsAnimate
 } from "../../enums/enums";
-import { IActivity } from "../../interfaces/interfaces";
+import { IActivity, IBlock } from "../../interfaces/interfaces";
 import {
   dateFormating,
   sortDates,
@@ -44,6 +44,7 @@ type Props = {
   loading?: boolean;
   blocksLoading?: boolean;
   loadingAnimation?: string;
+  onBlockBulletClick?: (e: MouseEvent, block?: IBlock) => unknown;
 };
 
 const ActivitiesBlock: FC<Props> = ({
@@ -61,7 +62,8 @@ const ActivitiesBlock: FC<Props> = ({
   activitiesLongRange = 20,
   loading = false,
   blocksLoading = false,
-  loadingAnimation = ESkeletonsAnimate.PULSE
+  loadingAnimation = ESkeletonsAnimate.PULSE,
+  onBlockBulletClick = () => false
 }) => {
   const [mappedActivities, setMappedActivities] = useState(activities);
   const [showCount, setShowCount] = useState(false);
@@ -113,8 +115,9 @@ const ActivitiesBlock: FC<Props> = ({
     }
   };
 
-  const toggleActivities = (): void => {
+  const toggleActivities = (e: MouseEvent): void => {
     setShowActivities(!showActivities);
+    onBlockBulletClick(e);
   };
 
   const isLongRangeElement = (a: TDate, b: TDate): boolean => {
@@ -154,7 +157,8 @@ const ActivitiesBlock: FC<Props> = ({
       )} ${className || ""} cursor-default`,
     indexes: {
       wrapper: "z-20 flex flex-col items-center order-1 mx-auto max-w-1",
-      bullet: "min-w-1 mx-auto font-semibold text-md text-white text-center p-2",
+      bullet:
+        "min-w-1 mx-auto font-semibold text-md text-white text-center p-2",
       extra: "bg-gray-800 shadow-md rounded-full h-8 justify-center"
     },
     block: {

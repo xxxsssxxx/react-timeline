@@ -559,4 +559,29 @@ describe("TimeLine", () => {
       expect(skeletons).toBeDefined();
     });
   });
+
+    describe("bullet click", () => {
+      test("On block bullet click emit event and block", async() => {
+        let event, emittedBlock;
+        const emittedArgs = (e: React.MouseEvent, block: IBlock) => {
+          event = e;
+          emittedBlock = block;
+        };
+
+        render(
+          <TimeLine
+            blocks={blocksText}
+            maxBlocks={blocksText.length}
+            activitiesBulletsType={EBulletType.NUMERIC}
+            onBlockBulletClick={emittedArgs}
+          />
+        );
+        const bullets = await screen.findAllByTestId("bullet");
+        fireEvent.click(bullets[0]);
+
+        expect(event).toBeDefined();
+        expect(emittedBlock).toBeDefined();
+        expect(emittedBlock).toEqual(blocksText[0]);
+      });
+    });
 });
