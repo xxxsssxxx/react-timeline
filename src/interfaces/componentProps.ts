@@ -27,3 +27,23 @@ export type TimeLineProps = {
   onBlockBulletClick?: (e: MouseEvent, block?: IBlock) => void;
   moreButton?: string;
 };
+
+export type ActivitiesBlockProps = {
+  activities: IActivity[];
+  index?: number;
+  blockText: string | Date;
+  folded?: boolean;
+  maxActivities?: number;
+  activitiesOffset?: number;
+  activitiesOrder?: string;
+  autoActivities?: boolean;
+  bulletsType?: string;
+  blockBulletsType?: string;
+  activitiesLoadCount?: string | boolean;
+  activitiesLongRange?: number;
+  loading?: boolean;
+  blocksLoading?: boolean;
+  loadingAnimation?: string;
+  onBlockBulletClick?: (e: MouseEvent, block?: IBlock) => unknown;
+  moreButton?: string
+}
