@@ -164,7 +164,7 @@ const TimeLine: FC<Props> = ({
             if (i >= blockLimit) return null;
             const autoActivitiesAcc =
               auto === undefined ? autoActivities : auto;
-            const autoActivitiesLoad =
+            const activitiesLoadAcc =
               loading === undefined ? activitiesLoading : loading;
             return (
               <div key={i} className="flex flex-col">
@@ -184,7 +184,7 @@ const TimeLine: FC<Props> = ({
                   bulletsType={bullets || activitiesBulletsType}
                   activitiesLongRange={longRange || activitiesLongRange}
                   blocksLoading={blocksLoading}
-                  loading={loading || autoActivitiesLoad}
+                  loading={loading || activitiesLoadAcc}
                   loadingAnimation={loadingAnimation}
                 />
                 <div className="border-2-2 border-opacity-20 border-gray-700 border h-12 mx-auto"></div>
