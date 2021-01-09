@@ -383,6 +383,24 @@ describe("Activity", () => {
         expect(skeletons).toHaveLength(0);
       });
     });
+
+    test("Use default pulse animation", () => {
+      render(
+        <ActivitiesBlock
+          activities={mockActivities}
+          blockText={blocksAutoFalse[0].blockText}
+          folded={false}
+          autoActivities={true}
+          activitiesLongRange={10}
+          maxActivities={mockActivities.length}
+          blocksLoading={true}
+        />
+      );
+
+      const skeletons = screen.queryAllByTestId("skeleton-bullet");
+      const isPulseAnimation = skeletons[0].classList.contains("animate-pulse");
+      expect(isPulseAnimation).toBe(true);
+    });
   });
 
 });
