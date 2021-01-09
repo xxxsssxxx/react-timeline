@@ -52,3 +52,14 @@ export type ActivityProps = {
   activity: IActivity;
   loading?: boolean;
 };
+
+export type SkeletonBulletProps = {
+  wrapperClass?: string;
+  bulletClass?: string;
+  animate?: string;
+};
+
+export type SkeletonActivityProps = {
+  wrapper?: string;
+  animate?: string;
+};
