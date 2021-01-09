@@ -45,6 +45,7 @@ type Props = {
   blocksLoading?: boolean;
   loadingAnimation?: string;
   onBlockBulletClick?: (e: MouseEvent, block?: IBlock) => unknown;
+  moreButton?: string
 };
 
 const ActivitiesBlock: FC<Props> = ({
@@ -63,14 +64,15 @@ const ActivitiesBlock: FC<Props> = ({
   loading = false,
   blocksLoading = false,
   loadingAnimation = ESkeletonsAnimate.PULSE,
-  onBlockBulletClick = () => false
+  onBlockBulletClick = () => false,
+  moreButton = "More"
 }) => {
   const [mappedActivities, setMappedActivities] = useState(activities);
   const [showCount, setShowCount] = useState(false);
   const [loadCount, setLoadCount] = useState(activitiesLoadCount);
   const [showActivities, setShowActivities] = useState(!folded);
   const [activitiesLimit, setActivitiesLimit] = useState(maxActivities);
-  const [moreButtonText, setMoreButtonText] = useState("more");
+  const [moreButtonText, setMoreButtonText] = useState(moreButton);
 
   const mapActivities = useMemo(
     () => (activities: IActivity[]): IActivity[] => {
@@ -111,7 +113,7 @@ const ActivitiesBlock: FC<Props> = ({
     if (loadCount && !isNaN(+loadCount)) {
       const count = `${+loadCount - activitiesOffset}`;
       setLoadCount(count);
-      setMoreButtonText(`more (${count})`);
+      setMoreButtonText(`${moreButton} (${count})`);
     }
   };
 
@@ -140,7 +142,7 @@ const ActivitiesBlock: FC<Props> = ({
       if (!!activitiesLoadCount && activitiesLimit < activities.length) {
         const count = `${activities.length - activitiesLimit}`;
         setLoadCount(count);
-        setMoreButtonText(`more (${count})`);
+        setMoreButtonText(`${moreButton} (${count})`);
       }
       setMappedActivities(mapActivities(activities));
     }
