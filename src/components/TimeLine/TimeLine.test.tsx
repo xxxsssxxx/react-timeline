@@ -563,7 +563,7 @@ describe("TimeLine", () => {
     describe("bullet click", () => {
       test("On block bullet click emit event and block", async() => {
         let event, emittedBlock;
-        const emittedArgs = (e: React.MouseEvent, block: IBlock) => {
+        const emittedArgs = (e: React.MouseEvent, block?: IBlock) => {
           event = e;
           emittedBlock = block;
         };

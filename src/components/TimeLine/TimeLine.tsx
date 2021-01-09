@@ -33,6 +33,7 @@ type Props = {
   activitiesLoading?: boolean;
   loadingAnimation?: string;
   onBlockBulletClick?: (e: MouseEvent, block?: IBlock) => void;
+  moreButton?: string
 };
 const TimeLine: FC<Props> = ({
   blocks,
@@ -55,12 +56,13 @@ const TimeLine: FC<Props> = ({
   blocksLoading = false,
   activitiesLoading = false,
   loadingAnimation = ESkeletonsAnimate.PULSE,
-  onBlockBulletClick = () => false
+  onBlockBulletClick = () => false,
+  moreButton = "More"
 }) => {
   const [mappedBlocks, setMappedBlocks] = useState(blocks);
   const [loadCount, setLoadCount] = useState(blockLoadCount);
   const [toolsTitle] = useState("Tools to play");
-  const [moreButtonText, setMoreButtonText] = useState("more");
+  const [moreButtonText, setMoreButtonText] = useState(moreButton);
   const [blockLimit, setBlockLimit] = useState(maxBlocks);
 
   const mapBlocks = useMemo(
@@ -109,7 +111,7 @@ const TimeLine: FC<Props> = ({
     if (loadCount && !isNaN(+loadCount)) {
       const count = `${+loadCount - blocksOffset}`;
       setLoadCount(count);
-      setMoreButtonText(`more (${count})`);
+      setMoreButtonText(`${moreButton} (${count})`);
     }
   };
 
@@ -137,7 +139,7 @@ const TimeLine: FC<Props> = ({
       if (!!blockLoadCount) {
         const count = `${blocks.length - blockLimit}`;
         setLoadCount(count);
-        setMoreButtonText(`more (${count})`);
+        setMoreButtonText(`${moreButton} (${count})`);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -150,53 +152,51 @@ const TimeLine: FC<Props> = ({
     >
       {showTools ? <Tools title={toolsTitle} /> : null}
       <div className="relative wrap overflow-hidden p-10 h-full mb-2">
-        {mappedBlocks.map(
-          (block, i) => {
-            const {
-              activities,
-              blockText,
-              max,
-              offset,
-              order,
-              auto,
-              bullets,
-              loadsCount,
-              isLongRange,
-              longRange,
-              loading
-            } = block;
-            if (i >= blockLimit) return null;
-            const autoActivitiesAcc =
-              auto === undefined ? autoActivities : auto;
-            const activitiesLoadAcc =
-              loading === undefined ? activitiesLoading : loading;
-            return (
-              <div key={i} className="flex flex-col">
-                {isLongRange ? <RangeDots /> : null}
-                <ActivitiesBlock
-                  activities={activities}
-                  blockText={blockText}
-                  folded={!!folded}
-                  maxActivities={max || maxActivities}
-                  activitiesOffset={offset || activitiesOffset}
-                  activitiesOrder={order || activitiesOrder}
-                  activitiesLoadCount={loadsCount || activitiesLoadCount}
-                  autoActivities={autoActivitiesAcc}
-                  key={i}
-                  index={i}
-                  blockBulletsType={blockBulletsType}
-                  bulletsType={bullets || activitiesBulletsType}
-                  activitiesLongRange={longRange || activitiesLongRange}
-                  blocksLoading={blocksLoading}
-                  loading={loading || activitiesLoadAcc}
-                  loadingAnimation={loadingAnimation}
-                  onBlockBulletClick={(e) => emitBulletClick(e, block)}
-                />
-                <div className="border-2-2 border-opacity-20 border-gray-700 border h-12 mx-auto"></div>
-              </div>
-            );
-          }
-        )}
+        {mappedBlocks.map((block, i) => {
+          const {
+            activities,
+            blockText,
+            max,
+            offset,
+            order,
+            auto,
+            bullets,
+            loadsCount,
+            isLongRange,
+            longRange,
+            loading
+          } = block;
+          if (i >= blockLimit) return null;
+          const autoActivitiesAcc = auto === undefined ? autoActivities : auto;
+          const activitiesLoadAcc =
+            loading === undefined ? activitiesLoading : loading;
+          return (
+            <div key={i} className="flex flex-col">
+              {isLongRange ? <RangeDots /> : null}
+              <ActivitiesBlock
+                activities={activities}
+                blockText={blockText}
+                folded={!!folded}
+                maxActivities={max || maxActivities}
+                activitiesOffset={offset || activitiesOffset}
+                activitiesOrder={order || activitiesOrder}
+                activitiesLoadCount={loadsCount || activitiesLoadCount}
+                autoActivities={autoActivitiesAcc}
+                key={i}
+                index={i}
+                blockBulletsType={blockBulletsType}
+                bulletsType={bullets || activitiesBulletsType}
+                activitiesLongRange={longRange || activitiesLongRange}
+                blocksLoading={blocksLoading}
+                loading={loading || activitiesLoadAcc}
+                loadingAnimation={loadingAnimation}
+                onBlockBulletClick={(e) => emitBulletClick(e, block)}
+                moreButton={moreButton}
+              />
+              <div className="border-2-2 border-opacity-20 border-gray-700 border h-12 mx-auto"></div>
+            </div>
+          );
+        })}
       </div>
       {blocks.length > blockLimit ? (
         <div className="button-wrapper mx-auto" data-testid="load-more-blocks">

@@ -39,6 +39,7 @@ const App = () => {
           activitiesLongRange={10}
           blocksLoading={false}
           loadingAnimation={ESkeletonsAnimate.PULSE}
+          moreButton={"Load more"}
         />
       </div>
     </div>
