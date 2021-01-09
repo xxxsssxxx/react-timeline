@@ -24,3 +24,8 @@ export enum EBulletType {
   NUMERIC = "numeric",
   TIMING = "time"
 }
+
+export enum ESkeletonsAnimate {
+  PULSE = "pulse",
+  BOUNCE = "bounce"
+}

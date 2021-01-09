@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, FC } from "react";
+import { useState, useMemo, useEffect, FC, MouseEvent } from "react";
 
 import ActivitiesBlock from "../ActivitiesBlock/ActivitiesBlock";
 import Tools from "../Tool/Tools";
@@ -6,7 +6,7 @@ import BaseButton from "../Base/Button/BaseButton";
 import RangeDots from "../RangeDots/RangeDots";
 
 import { IActivity, IBlock } from "../../interfaces/interfaces";
-import { EOrder, EBulletType } from "../../enums/enums";
+import { EOrder, EBulletType, ESkeletonsAnimate } from "../../enums/enums";
 import { dateFormating, isDateObject, sortDates, sortString, daysBetween, TDate } from "../../Utils/utils";
 
 type Props = {
@@ -29,6 +29,10 @@ type Props = {
   activitiesLongRange?: number;
   blockLoadCount?: string | boolean;
   activitiesLoadCount?: boolean;
+  blocksLoading?: boolean;
+  activitiesLoading?: boolean;
+  loadingAnimation?: string;
+  onBlockBulletClick?: (e: MouseEvent, block?: IBlock) => void;
 };
 const TimeLine: FC<Props> = ({
   blocks,
@@ -47,7 +51,11 @@ const TimeLine: FC<Props> = ({
   blocksOrder = EOrder.DESC,
   activitiesOrder = EOrder.DESC,
   blockBulletsType = EBulletType.TIMING,
-  activitiesBulletsType = EBulletType.NUMERIC
+  activitiesBulletsType = EBulletType.NUMERIC,
+  blocksLoading = false,
+  activitiesLoading = false,
+  loadingAnimation = ESkeletonsAnimate.PULSE,
+  onBlockBulletClick = () => false
 }) => {
   const [mappedBlocks, setMappedBlocks] = useState(blocks);
   const [loadCount, setLoadCount] = useState(blockLoadCount);
@@ -55,37 +63,46 @@ const TimeLine: FC<Props> = ({
   const [moreButtonText, setMoreButtonText] = useState("more");
   const [blockLimit, setBlockLimit] = useState(maxBlocks);
 
-  const mapBlocks = useMemo(() => (blocks: IBlock[]): IBlock[] => {
-    const mapped: IBlock[] = blocks.sort((a: IBlock, b: IBlock) => {
-      if (isDateObject(a.blockText) && isDateObject(b.blockText)) {
-        return sortDates(a.blockText, b.blockText, blocksOrder);
-      }
+  const mapBlocks = useMemo(
+    () => (blocks: IBlock[]): IBlock[] => {
+      const mapped: IBlock[] = blocks
+        .sort((a: IBlock, b: IBlock) => {
+          if (isDateObject(a.blockText) && isDateObject(b.blockText)) {
+            return sortDates(a.blockText, b.blockText, blocksOrder);
+          }
 
-      if (
-        typeof a.blockText === "string" &&
-        typeof b.blockText === "string"
-      ) {
-        return sortString(a.blockText, b.blockText, blocksOrder);
-      }
+          if (
+            typeof a.blockText === "string" &&
+            typeof b.blockText === "string"
+          ) {
+            return sortString(a.blockText, b.blockText, blocksOrder);
+          }
 
-      return 1;
-    })
-    .map((block, i) => {
-      const { blockText } = block;
-      const prevBlock = blocks[i - 1];
-      const isLongRange = i > 0 ? isLongRangeElement(blockText, prevBlock.blockText) : false;
-      if (isDateObject(blockText)) {
-        return {
-          ...block,
-          blockText: dateFormating(blockText, false),
-          isLongRange
-        };
-      }
-      return { ...block, isLongRange };
-    });
-    return mapped;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+          return 1;
+        })
+        .map((block, i) => {
+          const { blockText } = block;
+          const prevBlock = blocks[i - 1];
+          const isLongRange =
+            i > 0 ? isLongRangeElement(blockText, prevBlock.blockText) : false;
+          if (isDateObject(blockText)) {
+            return {
+              ...block,
+              blockText: dateFormating(blockText, false),
+              isLongRange
+            };
+          }
+          return { ...block, isLongRange };
+        });
+      return mapped;
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
+  const emitBulletClick = (e: MouseEvent, block?: IBlock): void => {
+    onBlockBulletClick(e, block);
+  };
 
   const loadMoreBlocks = () => {
     setBlockLimit((prevSatate) => prevSatate + blocksOffset);
@@ -101,8 +118,12 @@ const TimeLine: FC<Props> = ({
     const bDate = new Date(b);
     if (!isDateObject(aDate) || !isDateObject(bDate)) return false;
     const mapRangeConditions: { [key: string]: boolean } = {
-      [EOrder.DESC]: blocksLongRange ? blocksLongRange <= daysBetween(a, b) : false,
-      [EOrder.ASC]: blocksLongRange ? blocksLongRange <= daysBetween(b, a) : false
+      [EOrder.DESC]: blocksLongRange
+        ? blocksLongRange <= daysBetween(a, b)
+        : false,
+      [EOrder.ASC]: blocksLongRange
+        ? blocksLongRange <= daysBetween(b, a)
+        : false
     };
     const isRangeLonger = mapRangeConditions[blocksOrder];
     return isRangeLonger;
@@ -119,7 +140,7 @@ const TimeLine: FC<Props> = ({
         setMoreButtonText(`more (${count})`);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -130,9 +151,25 @@ const TimeLine: FC<Props> = ({
       {showTools ? <Tools title={toolsTitle} /> : null}
       <div className="relative wrap overflow-hidden p-10 h-full mb-2">
         {mappedBlocks.map(
-          ({ activities, blockText, max, offset, order, auto, bullets, loadsCount, isLongRange, longRange }, i) => {
+          (block, i) => {
+            const {
+              activities,
+              blockText,
+              max,
+              offset,
+              order,
+              auto,
+              bullets,
+              loadsCount,
+              isLongRange,
+              longRange,
+              loading
+            } = block;
             if (i >= blockLimit) return null;
-            const autoActivitiesAcc = auto === undefined ? autoActivities : auto;
+            const autoActivitiesAcc =
+              auto === undefined ? autoActivities : auto;
+            const activitiesLoadAcc =
+              loading === undefined ? activitiesLoading : loading;
             return (
               <div key={i} className="flex flex-col">
                 {isLongRange ? <RangeDots /> : null}
@@ -150,6 +187,10 @@ const TimeLine: FC<Props> = ({
                   blockBulletsType={blockBulletsType}
                   bulletsType={bullets || activitiesBulletsType}
                   activitiesLongRange={longRange || activitiesLongRange}
+                  blocksLoading={blocksLoading}
+                  loading={loading || activitiesLoadAcc}
+                  loadingAnimation={loadingAnimation}
+                  onBlockBulletClick={(e) => emitBulletClick(e, block)}
                 />
                 <div className="border-2-2 border-opacity-20 border-gray-700 border h-12 mx-auto"></div>
               </div>

@@ -537,4 +537,51 @@ describe("TimeLine", () => {
       expect(rangeDots).toBeNull();
     });
   });
+
+  describe("Loading", () => {
+    test("Prioritized loading set on block data to activitiesLoading", () => {
+      const copy = JSON.parse(JSON.stringify(blocks));
+      copy[0].loading = true;
+      render(
+        <TimeLine
+          blocks={copy}
+          maxBlocks={1}
+          maxActivities={2}
+          blocksLongRange={3}
+          activitiesLongRange={3}
+          autoBlocks={true}
+          autoActivities={true}
+          folded={false}
+          activitiesLoading={false}
+        />
+      );
+      const skeletons = screen.queryAllByTestId("skeleton-bullet");
+      expect(skeletons).toBeDefined();
+    });
+  });
+
+    describe("bullet click", () => {
+      test("On block bullet click emit event and block", async() => {
+        let event, emittedBlock;
+        const emittedArgs = (e: React.MouseEvent, block: IBlock) => {
+          event = e;
+          emittedBlock = block;
+        };
+
+        render(
+          <TimeLine
+            blocks={blocksText}
+            maxBlocks={blocksText.length}
+            activitiesBulletsType={EBulletType.NUMERIC}
+            onBlockBulletClick={emittedArgs}
+          />
+        );
+        const bullets = await screen.findAllByTestId("bullet");
+        fireEvent.click(bullets[0]);
+
+        expect(event).toBeDefined();
+        expect(emittedBlock).toBeDefined();
+        expect(emittedBlock).toEqual(blocksText[0]);
+      });
+    });
 });

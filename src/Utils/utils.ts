@@ -47,13 +47,13 @@ export const sortString = (a: string, b: string, order: string): number => {
 };
 
 export const treatAsUTC = (date: string | Date): Date => {
-  var result = new Date(date);
+  const result = new Date(date);
   result.setMinutes(result.getMinutes() - result.getTimezoneOffset());
   return result;
 };
 
 export const daysBetween = (startDate: TDate, endDate: TDate): number => {
-  var millisecondsPerDay = 24 * 60 * 60 * 1000;
+  const millisecondsPerDay = 24 * 60 * 60 * 1000;
   const daysBetween = (treatAsUTC(endDate).getTime() - treatAsUTC(startDate).getTime()) / millisecondsPerDay;
   return daysBetween;
 };
