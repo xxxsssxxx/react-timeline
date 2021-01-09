@@ -47,3 +47,8 @@ export type ActivitiesBlockProps = {
   onBlockBulletClick?: (e: MouseEvent, block?: IBlock) => unknown;
   moreButton?: string
 }
+
+export type ActivityProps = {
+  activity: IActivity;
+  loading?: boolean;
+};
