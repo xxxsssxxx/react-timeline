@@ -1,29 +1,11 @@
-import { FC, useState } from "react";
-import { ESkeletonsAnimate } from "../../../enums/enums";
-import { IAnimation } from "../../../interfaces/interfaces";
+import { FC } from "react";
+import { SkeletonBulletProps } from "../../../interfaces/componentProps";
+import { SkeletonAnimationLogic } from "../SkeletonAnimationLogic";
 
-type Props = {
-  wrapperClass?: string,
-  bulletClass?: string,
-  animate?: string
-}
+const SkeletonBullet: FC<SkeletonBulletProps> = (props) => {
+  const { wrapperClass, bulletClass, animate } = props;
 
-const SkeletonBullet: FC<Props> = ({
-  wrapperClass,
-  bulletClass,
-  animate = ESkeletonsAnimate.PULSE
-}) => {
-
-  const animationClass: IAnimation = {
-    [ESkeletonsAnimate.PULSE]: "animate-pulse",
-    [ESkeletonsAnimate.BOUNCE]: "animate-bounce"
-  };
-
-  const defaultAnimation =
-    animationClass[animate as keyof IAnimation] || "animate-pulse";
-
-  const [animation] = useState(defaultAnimation);
-
+  const { animation } = SkeletonAnimationLogic({ animate });
 
   return (
     <div

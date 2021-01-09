@@ -1,149 +1,45 @@
-import { useState, useMemo, useEffect, FC, MouseEvent } from "react";
+import { FC, MouseEvent } from "react";
 
 import ActivitiesBlock from "../ActivitiesBlock/ActivitiesBlock";
 import Tools from "../Tool/Tools";
 import BaseButton from "../Base/Button/BaseButton";
 import RangeDots from "../RangeDots/RangeDots";
 
-import { IActivity, IBlock } from "../../interfaces/interfaces";
-import { EOrder, EBulletType, ESkeletonsAnimate } from "../../enums/enums";
-import { dateFormating, isDateObject, sortDates, sortString, daysBetween, TDate } from "../../Utils/utils";
+import { TimeLineLogic } from "./TimeLineLogic";
 
-type Props = {
-  activities?: IActivity[];
-  showTools?: boolean;
-  type?: string;
-  blocks: IBlock[];
-  folded?: boolean;
-  maxBlocks?: number;
-  maxActivities?: number;
-  blocksOffset?: number;
-  activitiesOffset?: number;
-  autoBlocks?: boolean;
-  autoActivities?: boolean;
-  blocksOrder?: string;
-  activitiesOrder?: string;
-  activitiesBulletsType?: string;
-  blockBulletsType?: string;
-  blocksLongRange?: number;
-  activitiesLongRange?: number;
-  blockLoadCount?: string | boolean;
-  activitiesLoadCount?: boolean;
-  blocksLoading?: boolean;
-  activitiesLoading?: boolean;
-  loadingAnimation?: string;
-  onBlockBulletClick?: (e: MouseEvent, block?: IBlock) => void;
-  moreButton?: string
-};
-const TimeLine: FC<Props> = ({
-  blocks,
-  showTools = true,
-  folded = true,
-  blocksLongRange = 0,
-  activitiesLongRange = 0,
-  maxBlocks = 5,
-  maxActivities,
-  blocksOffset = 5,
-  activitiesOffset,
-  blockLoadCount = "",
-  activitiesLoadCount = false,
-  autoBlocks = false,
-  autoActivities = false,
-  blocksOrder = EOrder.DESC,
-  activitiesOrder = EOrder.DESC,
-  blockBulletsType = EBulletType.TIMING,
-  activitiesBulletsType = EBulletType.NUMERIC,
-  blocksLoading = false,
-  activitiesLoading = false,
-  loadingAnimation = ESkeletonsAnimate.PULSE,
-  onBlockBulletClick = () => false,
-  moreButton = "More"
-}) => {
-  const [mappedBlocks, setMappedBlocks] = useState(blocks);
-  const [loadCount, setLoadCount] = useState(blockLoadCount);
-  const [toolsTitle] = useState("Tools to play");
-  const [moreButtonText, setMoreButtonText] = useState(moreButton);
-  const [blockLimit, setBlockLimit] = useState(maxBlocks);
+import { TimeLineProps } from "../../interfaces/componentProps";
+import { EBulletType, EOrder, ESkeletonsAnimate } from "../../enums/enums";
 
-  const mapBlocks = useMemo(
-    () => (blocks: IBlock[]): IBlock[] => {
-      const mapped: IBlock[] = blocks
-        .sort((a: IBlock, b: IBlock) => {
-          if (isDateObject(a.blockText) && isDateObject(b.blockText)) {
-            return sortDates(a.blockText, b.blockText, blocksOrder);
-          }
+const TimeLine: FC<TimeLineProps> = (props) => {
 
-          if (
-            typeof a.blockText === "string" &&
-            typeof b.blockText === "string"
-          ) {
-            return sortString(a.blockText, b.blockText, blocksOrder);
-          }
+  const {
+    blocks,
+    folded = true,
+    activitiesLongRange = 0,
+    maxActivities = 5,
+    activitiesOffset = 5,
+    activitiesLoadCount = false,
+    autoActivities = false,
+    activitiesOrder = EOrder.DESC,
+    blockBulletsType = EBulletType.TIMING,
+    activitiesBulletsType = EBulletType.NUMERIC,
+    blocksLoading = false,
+    activitiesLoading = false,
+    loadingAnimation = ESkeletonsAnimate.PULSE
+  } = props;
 
-          return 1;
-        })
-        .map((block, i) => {
-          const { blockText } = block;
-          const prevBlock = blocks[i - 1];
-          const isLongRange =
-            i > 0 ? isLongRangeElement(blockText, prevBlock.blockText) : false;
-          if (isDateObject(blockText)) {
-            return {
-              ...block,
-              blockText: dateFormating(blockText, false),
-              isLongRange
-            };
-          }
-          return { ...block, isLongRange };
-        });
-      return mapped;
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
 
-  const emitBulletClick = (e: MouseEvent, block?: IBlock): void => {
-    onBlockBulletClick(e, block);
-  };
 
-  const loadMoreBlocks = () => {
-    setBlockLimit((prevSatate) => prevSatate + blocksOffset);
-    if (loadCount && !isNaN(+loadCount)) {
-      const count = `${+loadCount - blocksOffset}`;
-      setLoadCount(count);
-      setMoreButtonText(`${moreButton} (${count})`);
-    }
-  };
-
-  const isLongRangeElement = (a: TDate, b: TDate): boolean => {
-    const aDate = new Date(a);
-    const bDate = new Date(b);
-    if (!isDateObject(aDate) || !isDateObject(bDate)) return false;
-    const mapRangeConditions: { [key: string]: boolean } = {
-      [EOrder.DESC]: blocksLongRange
-        ? blocksLongRange <= daysBetween(a, b)
-        : false,
-      [EOrder.ASC]: blocksLongRange
-        ? blocksLongRange <= daysBetween(b, a)
-        : false
-    };
-    const isRangeLonger = mapRangeConditions[blocksOrder];
-    return isRangeLonger;
-  };
-
-  useEffect(() => {
-    if (autoBlocks) {
-      setMappedBlocks(mapBlocks(blocks));
-    }
-    if (blockLimit < blocks.length) {
-      if (!!blockLoadCount) {
-        const count = `${blocks.length - blockLimit}`;
-        setLoadCount(count);
-        setMoreButtonText(`${moreButton} (${count})`);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const {
+    mappedBlocks,
+    toolsTitle,
+    moreButtonText,
+    blockLimit,
+    showTools,
+    moreButton,
+    emitBulletClick,
+    loadMoreBlocks
+  } = TimeLineLogic(props);
 
   return (
     <div
@@ -190,7 +86,7 @@ const TimeLine: FC<Props> = ({
                 blocksLoading={blocksLoading}
                 loading={loading || activitiesLoadAcc}
                 loadingAnimation={loadingAnimation}
-                onBlockBulletClick={(e) => emitBulletClick(e, block)}
+                onBlockBulletClick={(e: MouseEvent) => emitBulletClick(e, block)}
                 moreButton={moreButton}
               />
               <div className="border-2-2 border-opacity-20 border-gray-700 border h-12 mx-auto"></div>

@@ -1,20 +1,13 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 
-import { IAnimation } from "../../interfaces/interfaces";
 import { ESkeletonsAnimate } from "../../enums/enums";
 
-type Props = {
-  wrapper?: string;
-  animate?: string;
-};
+import { SkeletonAnimationLogic } from "./SkeletonAnimationLogic";
 
-const SkeletonActivity: FC<Props> = ({ wrapper, animate = ESkeletonsAnimate.PULSE }) => {
-  const animationClass: IAnimation = {
-    [ESkeletonsAnimate.PULSE]: "animate-pulse",
-    [ESkeletonsAnimate.BOUNCE]: "animate-bounce"
-  };
-
-  const [animation] = useState(animationClass[animate as keyof IAnimation]);
+import { SkeletonActivityProps } from "../../interfaces/componentProps";
+const SkeletonActivity: FC<SkeletonActivityProps> = (props) => {
+  const { wrapper, animate = ESkeletonsAnimate.PULSE } = props;
+  const { animation } = SkeletonAnimationLogic({ animate });
 
   return (
     <div className={`${wrapper} ${animation}`} data-testid="skeleton-activity">
