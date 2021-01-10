@@ -1,6 +1,6 @@
 {
   "name": "react-timelime-test",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "private": false,
   "types": "./build/index.d.ts",
   "peerDependencies": {
@@ -55,7 +55,7 @@
     "test:coverage": "npm test -- --coverage --colors --no-cache",
     "eject": "react-scripts eject",
     "lint": "eslint --ext .js,.tsx,.ts --ignore-path .gitignore",
-    "prepare": "tsc && echo 'Finished building NPM package'"
+    "package:publish": "tsc && echo 'Finished building NPM package' && npm publish"
   },
   "eslintConfig": {
     "extends": [
