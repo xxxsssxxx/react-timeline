@@ -1,8 +1,8 @@
 import { useState, useMemo, useEffect, MouseEvent } from "react";
 
-import { TimeLineProps } from "../../interfaces/componentProps";
-import { IBlock } from "../../interfaces/interfaces";
-import { EOrder } from "../../enums/enums";
+import { TimeLineProps } from "../interfaces/componentProps";
+import { IBlock } from "../interfaces/interfaces";
+import { EOrder } from "../enums/enums";
 import {
   dateFormating,
   isDateObject,
@@ -10,12 +10,12 @@ import {
   sortString,
   daysBetween,
   TDate
-} from "../../Utils/utils";
+} from "../Utils/utils";
 
 export const TimeLineLogic = (props: TimeLineProps) => {
   const {
     blocks,
-    showTools = true,
+    showTools = false,
     blocksLongRange = 0,
     maxBlocks = 5,
     blocksOffset = 5,

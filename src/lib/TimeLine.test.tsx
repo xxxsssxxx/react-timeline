@@ -1,10 +1,10 @@
 import { cleanup, render, screen, fireEvent } from "@testing-library/react";
 import TimeLine from "./TimeLine";
 
-import { blocks, blocksText, shuffle } from "../../mocks/mocks";
-import { dateFormating } from "../../Utils/utils";
-import { IBlock } from "../../interfaces/interfaces";
-import { EBulletType, EOrder } from "../../enums/enums";
+import { blocks, blocksText, shuffle } from "../mocks/mocks";
+import { dateFormating } from "../Utils/utils";
+import { IBlock } from "../interfaces/interfaces";
+import { EBulletType, EOrder } from "../enums/enums";
 
 describe("TimeLine", () => {
   let mockBlocks: IBlock[];
@@ -20,7 +20,7 @@ describe("TimeLine", () => {
 
   describe("Tools", () => {
     test("Renders tools if showTools set to true", async() => {
-      render(<TimeLine blocks={mockBlocks} />);
+      render(<TimeLine blocks={mockBlocks} showTools={true} />);
       const tools = screen.queryByTestId("tools");
       expect(tools).not.toBeNull();
     });

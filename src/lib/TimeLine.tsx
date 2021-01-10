@@ -1,14 +1,14 @@
 import { FC, MouseEvent } from "react";
 
-import ActivitiesBlock from "../ActivitiesBlock/ActivitiesBlock";
-import Tools from "../Tool/Tools";
-import BaseButton from "../Base/Button/BaseButton";
-import RangeDots from "../RangeDots/RangeDots";
+import ActivitiesBlock from "../components/ActivitiesBlock/ActivitiesBlock";
+import Tools from "../components/Tool/Tools";
+import BaseButton from "../components/Base/Button/BaseButton";
+import RangeDots from "../components/RangeDots/RangeDots";
 
 import { TimeLineLogic } from "./TimeLineLogic";
 
-import { TimeLineProps } from "../../interfaces/componentProps";
-import { EBulletType, EOrder, ESkeletonsAnimate } from "../../enums/enums";
+import { TimeLineProps } from "../interfaces/componentProps";
+import { EBulletType, EOrder, ESkeletonsAnimate } from "../enums/enums";
 
 const TimeLine: FC<TimeLineProps> = (props) => {
 
