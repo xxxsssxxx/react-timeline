@@ -1,1 +1,3 @@
-export * from "./lib/TimeLine";
+import TimeLine from "./lib/TimeLine";
+
+export default TimeLine;
