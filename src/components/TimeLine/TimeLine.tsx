@@ -41,6 +41,20 @@ const TimeLine: FC<TimeLineProps> = (props) => {
     loadMoreBlocks
   } = TimeLineLogic(props);
 
+  const MoreButton: FC = () => {
+    if (blocks.length < blockLimit) return null;
+
+    return (
+      <div className="button-wrapper mx-auto" data-testid="load-more-blocks">
+        <BaseButton
+          type={"primary"}
+          text={moreButtonText}
+          click={loadMoreBlocks}
+        />
+      </div>
+    );
+  };
+
   return (
     <div
       className="timeline-wrapper mx-auto w-full h-full flex flex-col"
@@ -94,15 +108,7 @@ const TimeLine: FC<TimeLineProps> = (props) => {
           );
         })}
       </div>
-      {blocks.length > blockLimit ? (
-        <div className="button-wrapper mx-auto" data-testid="load-more-blocks">
-          <BaseButton
-            type={"primary"}
-            text={moreButtonText}
-            click={loadMoreBlocks}
-          />
-        </div>
-      ) : null}
+      <MoreButton />
     </div>
   );
 };
