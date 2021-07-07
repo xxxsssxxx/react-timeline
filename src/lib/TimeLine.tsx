@@ -1,14 +1,14 @@
 import { FC, MouseEvent } from "react";
 
-import ActivitiesBlock from "../ActivitiesBlock/ActivitiesBlock";
-import Tools from "../Tool/Tools";
-import BaseButton from "../Base/Button/BaseButton";
-import RangeDots from "../RangeDots/RangeDots";
+import ActivitiesBlock from "../components/ActivitiesBlock/ActivitiesBlock";
+import Tools from "../components/Tool/Tools";
+import BaseButton from "../components/Base/Button/BaseButton";
+import RangeDots from "../components/RangeDots/RangeDots";
 
 import { TimeLineLogic } from "./TimeLineLogic";
 
-import { TimeLineProps } from "../../interfaces/componentProps";
-import { EBulletType, EOrder, ESkeletonsAnimate } from "../../enums/enums";
+import { TimeLineProps } from "../interfaces/componentProps";
+import { EBulletType, EOrder, ESkeletonsAnimate } from "../enums/enums";
 
 const TimeLine: FC<TimeLineProps> = (props) => {
 
@@ -40,6 +40,20 @@ const TimeLine: FC<TimeLineProps> = (props) => {
     emitBulletClick,
     loadMoreBlocks
   } = TimeLineLogic(props);
+
+  const MoreButton: FC = () => {
+    if (blocks.length < blockLimit) return null;
+
+    return (
+      <div className="button-wrapper mx-auto" data-testid="load-more-blocks">
+        <BaseButton
+          type={"primary"}
+          text={moreButtonText}
+          click={loadMoreBlocks}
+        />
+      </div>
+    );
+  };
 
   return (
     <div
@@ -94,15 +108,7 @@ const TimeLine: FC<TimeLineProps> = (props) => {
           );
         })}
       </div>
-      {blocks.length > blockLimit ? (
-        <div className="button-wrapper mx-auto" data-testid="load-more-blocks">
-          <BaseButton
-            type={"primary"}
-            text={moreButtonText}
-            click={loadMoreBlocks}
-          />
-        </div>
-      ) : null}
+      <MoreButton />
     </div>
   );
 };
